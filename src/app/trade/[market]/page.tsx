@@ -4,14 +4,9 @@ import { SwapUI } from "@/app/components/SwapUi";
 import { TradeView } from "@/app/components/TradeView";
 import { Depth } from "@/app/components/for_depth/Depth";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Page() {
   const { market } = useParams();
-
-  useEffect(() => {
-    
-  }, []);
 
   return (
     <div className="flex flex-row flex-1">

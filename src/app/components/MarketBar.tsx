@@ -3,12 +3,44 @@ import { useEffect, useState } from "react";
 import { Ticker } from "../utils/types";
 import { getTicker } from "../utils/httpClient";
 import Image from "next/image";
+import { WSClient } from "../utils/RealTimeUtil";
 
 export const MarketBar = ({ market }: { market: string }) => {
   const [ticker, setTicker] = useState<Ticker | null>(null);
 
+  //this is so that when we mount the Marketbar, we register for the event ticker which then runs the cllback fn which actually expects data Ticker and then updat teh ticker for Marketbar using setTicker
   useEffect(() => {
     getTicker(market).then(setTicker);
+    WSClient.getInstance().registerCallBack(
+      "ticker",
+      (data: Ticker) =>
+        setTicker((prevTicker) => ({
+          firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? "",
+          highPrice: data?.highPrice ?? prevTicker?.highPrice ?? "",
+          lastPrice: data?.lastPrice ?? prevTicker?.lastPrice ?? "",
+          lowPrice: data?.lowPrice ?? prevTicker?.lowPrice ?? "",
+          priceChange: data?.priceChange ?? prevTicker?.priceChange ?? "",
+          priceChangePercent:
+            data?.priceChangePercent ?? prevTicker?.priceChangePercent ?? "",
+          quoteVolume: data?.quoteVolume ?? prevTicker?.quoteVolume ?? "",
+          symbol: data?.symbol ?? prevTicker?.symbol ?? "",
+          trades: data?.trades ?? prevTicker?.trades ?? "",
+          volume: data?.volume ?? prevTicker?.volume ?? "",
+        })),
+      `TICKER-${market}`
+    );
+    WSClient.getInstance().sendMessage({
+      message: "SUBSCRIBE",
+      params: `ticker-${market}`,
+    });
+
+    return () => {
+      WSClient.getInstance().deRegisterCallBack("ticker", `TICKER-${market}`);
+      WSClient.getInstance().sendMessage({
+        message: "UNSUBSCRIBE",
+        params: `ticker-${market}`,
+      });
+    };
   }, [market]);
 
   console.log(ticker);
