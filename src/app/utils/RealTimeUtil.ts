@@ -1,4 +1,4 @@
-import { Ticker } from "./types";
+import { Depth, Ticker } from "./types";
 
 export const BASE_URL = "wss://stream.binance.com:9443/ws";
 
@@ -36,21 +36,34 @@ export class WSClient {
     this.ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       const type = message.e;
+    //   console.log(message);
       if (this.callbacks[type]) {
-        this.callbacks[type].forEach((xx) => {
-          const newTicker: Partial<Ticker> = {
-            highPrice: message.h,
-            lowPrice: message.l,
-            volume: message.v,
-            symbol: message.s,
-            lastPrice: message.c,
-            quoteVolume: message.q,
-            priceChange: message.p,
-            priceChangePercent: message.P,
-          };
+        if (type === "24hrTicker") {
+          this.callbacks[type].forEach((xx) => {
+            const newTicker: Partial<Ticker> = {
+              highPrice: message.h,
+              lowPrice: message.l,
+              volume: message.v,
+              symbol: message.s,
+              lastPrice: message.c,
+              quoteVolume: message.q,
+              priceChange: message.p,
+              priceChangePercent: message.P,
+            };
 
-          xx.callback(newTicker);
-        });
+            xx.callback(newTicker);
+          });
+        } else if (type === "depthUpdate") {
+          this.callbacks[type].forEach((xx) => {
+            const newDepth: Depth = {
+              bids: message.b,
+              asks: message.a,
+              lastUpdateId: message.lastUpdateId,
+            };
+
+            xx.callback(newDepth);
+          });
+        }
       }
     };
   }
