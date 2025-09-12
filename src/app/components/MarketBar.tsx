@@ -12,8 +12,8 @@ export const MarketBar = ({ market }: { market: string }) => {
   useEffect(() => {
     getTicker(market).then(setTicker);
     WSClient.getInstance().registerCallBack(
-      "ticker",
-      (data: Ticker) =>
+      "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
+      (data: Partial<Ticker>) =>
         setTicker((prevTicker) => ({
           firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? "",
           highPrice: data?.highPrice ?? prevTicker?.highPrice ?? "",
@@ -29,21 +29,20 @@ export const MarketBar = ({ market }: { market: string }) => {
         })),
       `TICKER-${market}`
     );
+    console.log(market.toLowerCase());
     WSClient.getInstance().sendMessage({
-      message: "SUBSCRIBE",
-      params: `ticker-${market}`,
+      method: "SUBSCRIBE",
+      params: [`${market.toLowerCase()}@ticker`],
     });
 
     return () => {
-      WSClient.getInstance().deRegisterCallBack("ticker", `TICKER-${market}`);
+      WSClient.getInstance().deRegisterCallBack("24hrTicker", `TICKER-${market}`);
       WSClient.getInstance().sendMessage({
-        message: "UNSUBSCRIBE",
-        params: `ticker-${market}`,
+        method: "UNSUBSCRIBE",
+        params: [`${market.toLowerCase()}@ticker`],
       });
     };
   }, [market]);
-
-  console.log(ticker);
 
   return (
     <div>
@@ -62,11 +61,9 @@ export const MarketBar = ({ market }: { market: string }) => {
               </p>
             </div>
             <div className="flex flex-col">
-              <p className={`font-medium text-xs text-slate-400 text-sm`}>
-                24H Change
-              </p>
+              <p className={`font-medium text-xs text-slate-400`}>24H Change</p>
               <p
-                className={` text-sm font-medium tabular-nums leading-5 text-sm text-greenText ${
+                className={` text-sm font-medium tabular-nums leading-5 text-greenText ${
                   Number(ticker?.priceChange) > 0
                     ? "text-green-500"
                     : "text-red-500"
@@ -78,18 +75,14 @@ export const MarketBar = ({ market }: { market: string }) => {
               </p>
             </div>
             <div className="flex flex-col">
-              <p className="font-medium text-xs text-slate-400 text-sm">
-                24H High
-              </p>
-              <p className="text-sm font-medium tabular-nums leading-5 text-sm ">
+              <p className="font-medium text-xs text-slate-400">24H High</p>
+              <p className="text-sm font-medium tabular-nums leading-5 ">
                 {Number(ticker?.highPrice).toFixed(2)}
               </p>
             </div>
             <div className="flex flex-col">
-              <p className="font-medium text-xs text-slate-400 text-sm">
-                24H Low
-              </p>
-              <p className="text-sm font-medium tabular-nums leading-5 text-sm ">
+              <p className="font-medium text-xs text-slate-400">24H Low</p>
+              <p className="text-sm font-medium tabular-nums leading-5">
                 {Number(ticker?.lowPrice).toFixed(2)}
               </p>
             </div>
@@ -99,10 +92,8 @@ export const MarketBar = ({ market }: { market: string }) => {
               data-rac=""
             >
               <div className="flex flex-col">
-                <p className="font-medium text-xs text-slate-400 text-sm">
-                  24H Volume
-                </p>
-                <p className="mt-1 text-sm font-medium tabular-nums leading-5 text-sm ">
+                <p className="font-medium text-xs text-slate-400">24H Volume</p>
+                <p className="mt-1 text-sm font-medium tabular-nums leading-5">
                   {Number(ticker?.volume).toFixed(2)}
                 </p>
               </div>
