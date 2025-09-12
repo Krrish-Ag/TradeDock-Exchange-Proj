@@ -36,7 +36,10 @@ export const MarketBar = ({ market }: { market: string }) => {
     });
 
     return () => {
-      WSClient.getInstance().deRegisterCallBack("24hrTicker", `TICKER-${market}`);
+      WSClient.getInstance().deRegisterCallBack(
+        "24hrTicker",
+        `TICKER-${market}`
+      );
       WSClient.getInstance().sendMessage({
         method: "UNSUBSCRIBE",
         params: [`${market.toLowerCase()}@ticker`],
