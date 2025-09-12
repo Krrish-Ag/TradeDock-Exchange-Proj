@@ -51,17 +51,17 @@ function Bid({
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
+          right: 0,
           width: `${(100 * total) / maxTotal}%`,
           height: "100%",
           background: "rgba(1, 167, 129, 0.325)",
           transition: "width 0.3s ease-in-out",
         }}
       ></div>
-      <div className={`flex justify-between text-xs w-full`}>
-        <div>{price}</div>
-        <div>{quantity}</div>
-        <div>{total.toFixed(2)}</div>
+      <div className="flex justify-between w-full">
+        <div className="text-green-200">{(+price).toFixed(2)}</div>
+        <div>{(+price).toFixed(2)}</div>
+        <div>{total?.toFixed(2)}</div>
       </div>
     </div>
   );

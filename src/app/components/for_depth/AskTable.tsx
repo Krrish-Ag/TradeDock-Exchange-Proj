@@ -57,7 +57,7 @@ function Ask({
         style={{
           position: "absolute",
           top: 0,
-          left: 0,
+          right: 0,
           width: `${(100 * total) / maxTotal}%`,
           height: "100%",
           background: "rgba(228, 75, 68, 0.325)",
@@ -65,8 +65,8 @@ function Ask({
         }}
       ></div>
       <div className="flex justify-between text-xs w-full">
-        <div>{price}</div>
-        <div>{quantity}</div>
+        <div className="text-red-200">{(+price).toFixed(2)}</div>
+        <div>{(+price).toFixed(2)}</div>
         <div>{total?.toFixed(2)}</div>
       </div>
     </div>

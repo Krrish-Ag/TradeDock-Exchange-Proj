@@ -61,7 +61,7 @@ export function Depth({ market }: { market: string }) {
     <div>
       <TableHeader />
       {asks && <AskTable asks={asks} />}
-      {price && <div>{price}</div>}
+      {price && <div className="text-lg">{(+price).toFixed(2)}</div>}
       {bids && <BidTable bids={bids} />}
     </div>
   );
