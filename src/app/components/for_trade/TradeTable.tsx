@@ -14,8 +14,8 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
         >
           {(+trade.price).toFixed(2)}
         </div>
-        <div>{(+trade.quantity).toFixed(2)}</div>
-        <div>{formatDate(trade.timestamp)}</div>
+        <div>{(+trade.qty).toFixed(2)}</div>
+        <div>{formatDate(trade.time)}</div>
       </div>
     );
   });

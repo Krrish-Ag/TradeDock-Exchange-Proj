@@ -22,10 +22,7 @@ export function Depth({ market }: { market: string }) {
 
     // WSClient.getInstance().sendMessage({
     //   method: "SUBSCRIBE",
-    //   params: [
-    //     `${market.toLowerCase()}@depth`,
-    //     `${market.toLowerCase()}@trade`,
-    //   ],
+    //   params: [`${market.toLowerCase()}@depth`],
     // });
     WSClient.getInstance().registerCallBack(
       "depthUpdate",
@@ -37,6 +34,7 @@ export function Depth({ market }: { market: string }) {
     );
 
     //for the last price
+    //see that I didnt subsribe to ticker here, so it is still getting vals from the MarketBar ticker sub
     WSClient.getInstance().registerCallBack(
       "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
       (data: Partial<Ticker>) =>
@@ -49,14 +47,14 @@ export function Depth({ market }: { market: string }) {
       //   method: "UNSUBSCRIBE",
       //   params: [`${market.toLowerCase()}@depth`],
       // });
-      WSClient.getInstance().deRegisterCallBack(
-        "depthUpdate",
-        `depth-${market}`
-      );
-      WSClient.getInstance().deRegisterCallBack(
-        "24hrTicker",
-        `TICKER-DEPTH-${market}`
-      );
+      // WSClient.getInstance().deRegisterCallBack(
+      //   "depthUpdate",
+      //   `depth-${market}`
+      // );
+      // WSClient.getInstance().deRegisterCallBack(
+      //   "24hrTicker",
+      //   `TICKER-DEPTH-${market}`
+      // );
     };
   }, [market]);
 

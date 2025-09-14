@@ -2,21 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { WSClient } from "@/app/utils/RealTimeUtil";
-import { Depth, Ticker, Trade } from "@/app/utils/types";
-import { BidTable } from "./for_depth/BidTable";
-import { AskTable } from "./for_depth/AskTable";
+import { Trade } from "@/app/utils/types";
 import { TradeTable } from "./for_trade/TradeTable";
+import { getTrades } from "../utils/httpClient";
 
 export function Trades({ market }: { market: string }) {
   const [trades, setTrades] = useState<Trade[]>([]);
-  const [price, setPrice] = useState<string>();
 
   useEffect(() => {
+    getTrades(market).then((d) => {
+      setTrades(d);
+    });
+
     // WSClient.getInstance().sendMessage({
     //   method: "SUBSCRIBE",
     //   params: [
     //     `${market.toLowerCase()}@trade`,
-    //     `${market.toLowerCase()}@depth`,
+    //     // `${market.toLowerCase()}@depth`,
     //   ],
     // });
 
@@ -26,14 +28,14 @@ export function Trades({ market }: { market: string }) {
       (data: Trade) => {
         setTrades((prev) => {
           if (prev.length > 0 && prev[0].id === data.id) return prev;
-          const newTrades = prev;
+          const newTrades = [...prev];
           console.log(data);
           newTrades?.unshift({
             id: data.id ?? "",
             isBuyerMaker: data.isBuyerMaker ?? "",
             price: data.price ?? "",
-            quantity: data.quantity ?? "",
-            timestamp: data.timestamp ?? "",
+            qty: data.qty ?? "",
+            time: data.time ?? "",
           });
           // newTrades.slice(0, 20);
           return newTrades;
@@ -43,30 +45,20 @@ export function Trades({ market }: { market: string }) {
     );
 
     //for the last price
-    //see that I didnt subsribe to ticker here, so it is still getting vals from the MarketBar ticker sub
-    WSClient.getInstance().registerCallBack(
-      "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
-      (data: Partial<Ticker>) =>
-        setPrice((prevPrice) => data?.lastPrice ?? prevPrice ?? ""),
-      `TICKER-${market}`
-    );
+
+    // WSClient.getInstance().registerCallBack(
+    //   "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
+    //   (data: Partial<Ticker>) =>
+    //     setPrice((prevPrice) => data?.lastPrice ?? prevPrice ?? ""),
+    //   `TICKER-${market}`
+    // );
 
     return () => {
       // WSClient.getInstance().sendMessage({
       //   method: "UNSUBSCRIBE",
-      //   params: [
-      //     `${market.toLowerCase()}@trade`,
-      //   ],
+      //   params: [`${market.toLowerCase()}@trade`],
       // });
-      WSClient.getInstance().deRegisterCallBack(
-        "depthUpdate",
-        `depth-${market}`
-      );
-      WSClient.getInstance().deRegisterCallBack(
-        "24hrTicker",
-        `TICKER-${market}`
-      );
-      WSClient.getInstance().deRegisterCallBack("trade", `trade-${market}`);
+      // WSClient.getInstance().deRegisterCallBack("trade", `trade-${market}`);
     };
   }, [market]);
 

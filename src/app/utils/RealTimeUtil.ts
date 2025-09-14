@@ -69,8 +69,8 @@ export class WSClient {
               id: message.t,
               isBuyerMaker: message.m,
               price: message.p,
-              quantity: message.q,
-              timestamp: message.E,
+              qty: message.q,
+              time: message.E,
             };
             console.log(newTrade);
 

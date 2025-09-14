@@ -16,8 +16,8 @@ export interface Trade {
   id: number;
   isBuyerMaker: boolean;
   price: string;
-  quantity: string;
-  timestamp: number;
+  qty: string;
+  time: number;
 }
 
 export interface Depth {
