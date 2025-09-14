@@ -20,10 +20,13 @@ export function Depth({ market }: { market: string }) {
 
     getTicker(market).then((t) => setPrice(t.lastPrice));
 
-    WSClient.getInstance().sendMessage({
-      method: "SUBSCRIBE",
-      params: [`${market.toLowerCase()}@depth`],
-    });
+    // WSClient.getInstance().sendMessage({
+    //   method: "SUBSCRIBE",
+    //   params: [
+    //     `${market.toLowerCase()}@depth`,
+    //     `${market.toLowerCase()}@trade`,
+    //   ],
+    // });
     WSClient.getInstance().registerCallBack(
       "depthUpdate",
       (data: Depth) => {
@@ -38,27 +41,27 @@ export function Depth({ market }: { market: string }) {
       "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
       (data: Partial<Ticker>) =>
         setPrice((prevPrice) => data?.lastPrice ?? prevPrice ?? ""),
-      `TICKER-${market}`
+      `TICKER-DEPTH-${market}`
     );
 
     return () => {
-      WSClient.getInstance().sendMessage({
-        method: "UNSUBSCRIBE",
-        params: [`${market.toLowerCase()}@depth`],
-      });
+      // WSClient.getInstance().sendMessage({
+      //   method: "UNSUBSCRIBE",
+      //   params: [`${market.toLowerCase()}@depth`],
+      // });
       WSClient.getInstance().deRegisterCallBack(
         "depthUpdate",
         `depth-${market}`
       );
       WSClient.getInstance().deRegisterCallBack(
         "24hrTicker",
-        `TICKER-${market}`
+        `TICKER-DEPTH-${market}`
       );
     };
   }, [market]);
 
   return (
-    <div>
+    <div className="overflow-y-auto no-scrollbar">
       <TableHeader />
       {asks && <AskTable asks={asks} />}
       {price && <div className="text-lg">{(+price).toFixed(2)}</div>}

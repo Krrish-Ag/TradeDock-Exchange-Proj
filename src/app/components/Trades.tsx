@@ -8,28 +8,17 @@ import { AskTable } from "./for_depth/AskTable";
 import { TradeTable } from "./for_trade/TradeTable";
 
 export function Trades({ market }: { market: string }) {
-  const [bids, setBids] = useState<[string, string][]>();
-  const [asks, setAsks] = useState<[string, string][]>();
   const [trades, setTrades] = useState<Trade[]>([]);
-  const [latestTrade, setLatestTrade] = useState<number>();
   const [price, setPrice] = useState<string>();
 
   useEffect(() => {
-    WSClient.getInstance().sendMessage({
-      method: "SUBSCRIBE",
-      params: [
-        `${market.toLowerCase()}@trade`,
-        `${market.toLowerCase()}@depth`,
-      ],
-    });
-    WSClient.getInstance().registerCallBack(
-      "depthUpdate",
-      (data: Depth) => {
-        setBids((prev) => data.bids ?? prev ?? []);
-        setAsks((prev) => data.asks ?? prev ?? []);
-      },
-      `depth-${market}`
-    );
+    // WSClient.getInstance().sendMessage({
+    //   method: "SUBSCRIBE",
+    //   params: [
+    //     `${market.toLowerCase()}@trade`,
+    //     `${market.toLowerCase()}@depth`,
+    //   ],
+    // });
 
     //for the latest price in trades
     WSClient.getInstance().registerCallBack(
@@ -63,13 +52,12 @@ export function Trades({ market }: { market: string }) {
     );
 
     return () => {
-      WSClient.getInstance().sendMessage({
-        method: "UNSUBSCRIBE",
-        params: [
-          `${market.toLowerCase()}@trade`,
-          `${market.toLowerCase()}@depth`,
-        ],
-      });
+      // WSClient.getInstance().sendMessage({
+      //   method: "UNSUBSCRIBE",
+      //   params: [
+      //     `${market.toLowerCase()}@trade`,
+      //   ],
+      // });
       WSClient.getInstance().deRegisterCallBack(
         "depthUpdate",
         `depth-${market}`

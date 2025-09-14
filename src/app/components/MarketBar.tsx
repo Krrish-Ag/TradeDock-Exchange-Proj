@@ -17,7 +17,7 @@ export const MarketBar = ({ market }: { market: string }) => {
         setTicker((prevTicker) => ({
           firstPrice: data?.firstPrice ?? prevTicker?.firstPrice ?? "",
           highPrice: data?.highPrice ?? prevTicker?.highPrice ?? "",
-          lastPrice: data?.lastPrice ?? prevTicker?.lastPrice ?? "",
+          lastPrice: data?.lastPrice ?? "",
           lowPrice: data?.lowPrice ?? prevTicker?.lowPrice ?? "",
           priceChange: data?.priceChange ?? prevTicker?.priceChange ?? "",
           priceChangePercent:
@@ -32,7 +32,11 @@ export const MarketBar = ({ market }: { market: string }) => {
     console.log(market.toLowerCase());
     WSClient.getInstance().sendMessage({
       method: "SUBSCRIBE",
-      params: [`${market.toLowerCase()}@ticker`],
+      params: [
+        `${market.toLowerCase()}@ticker`,
+        `${market.toLowerCase()}@trade`,
+        `${market.toLowerCase()}@depth`,
+      ],
     });
 
     return () => {
@@ -40,10 +44,10 @@ export const MarketBar = ({ market }: { market: string }) => {
         "24hrTicker",
         `TICKER-${market}`
       );
-      WSClient.getInstance().sendMessage({
-        method: "UNSUBSCRIBE",
-        params: [`${market.toLowerCase()}@ticker`],
-      });
+      // WSClient.getInstance().sendMessage({
+      //   method: "UNSUBSCRIBE",
+      //   params: [`${market.toLowerCase()}@ticker`],
+      // });
     };
   }, [market]);
 

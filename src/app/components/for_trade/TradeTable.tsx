@@ -3,6 +3,7 @@ import { Trade } from "../../utils/types";
 export function TradeTable({ trades }: { trades: Trade[] }) {
   return trades.map((trade, i) => {
     return (
+      // eslint-disable-next-line react/jsx-key
       <div className="flex justify-between w-full">
         <div
           className={`${
