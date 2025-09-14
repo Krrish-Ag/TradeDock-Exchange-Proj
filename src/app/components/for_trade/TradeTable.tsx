@@ -4,7 +4,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
   return trades.map((trade, i) => {
     return (
       // eslint-disable-next-line react/jsx-key
-      <div className="flex justify-between w-full">
+      <div className="grid grid-cols-[3fr_2fr_1fr] w-full">
         <div
           className={`${
             i == trades.length - 1 || trades[i].price > trades[i + 1].price

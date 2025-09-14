@@ -19,21 +19,25 @@ export default function Page() {
     <div className="flex flex-row flex-1">
       <div className="flex flex-col flex-1">
         <MarketBar market={marketName} marketWithUnderScore={market} />
-        <div className="flex flex-row h-[620px] border-y border-slate-800">
+        <div className="flex h-[620px] border-y border-slate-800">
           <div className="flex flex-col flex-1">
             <TradeView market={marketName} />
           </div>
           <div className="w-[1px] flex-col border-slate-800 border-l"></div>
           <div className="p-2 flex flex-col gap-2 w-[250px] overflow-hidden">
-            <div className="flex gap-8">
+            <div className="flex gap-4">
               <div
-                className="bg-gray-700 hover:bg-gray-800 py-1 px-2 rounded-lg cursor-pointer"
+                className={`${
+                  activeTab === "Book" ? "bg-gray-700" : "text-slate-400"
+                } hover:bg-gray-800 py-1 px-2 rounded-lg cursor-pointer`}
                 onClick={() => setActiveTab("Book")}
               >
                 Book
               </div>
               <div
-                className="bg-gray-700 hover:bg-gray-800 py-1 px-2 rounded-lg cursor-pointer"
+                className={`${
+                  activeTab === "Trades" ? "bg-gray-700" : "text-slate-400"
+                } hover:bg-gray-800 py-1 px-2 rounded-lg cursor-pointer`}
                 onClick={() => setActiveTab("Trades")}
               >
                 Trades

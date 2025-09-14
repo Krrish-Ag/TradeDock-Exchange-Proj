@@ -77,17 +77,17 @@ export const MarketBar = ({
               <p
                 className={`font-medium tabular-nums text-greenText text-md text-green-500`}
               >
-                ${ticker?.lastPrice}
+                ${Number(ticker?.lastPrice).toFixed(2)}
               </p>
               <p className="font-medium text-sm tabular-nums">
-                ${ticker?.lastPrice}
+                ${Number(ticker?.lastPrice).toFixed(2)}
               </p>
             </div>
             <div className="flex flex-col">
               <p className={`font-medium text-xs text-slate-400`}>24H Change</p>
               <p
                 className={` text-sm font-medium tabular-nums leading-5 text-greenText ${
-                  Number(ticker?.priceChange) > 0
+                  Number(Number(ticker?.priceChange).toFixed(2)) > 0
                     ? "text-green-500"
                     : "text-red-500"
                 }`}

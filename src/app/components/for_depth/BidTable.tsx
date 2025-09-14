@@ -60,7 +60,7 @@ function Bid({
           transition: "width 0.3s ease-in-out",
         }}
       ></div>
-      <div className="flex justify-between w-full">
+      <div className="grid grid-cols-[3fr_2fr_1fr] w-full">
         <div className="text-green-200">{(+price).toFixed(2)}</div>
         <div>{(+quantity).toFixed(2)}</div>
         <div>{total?.toFixed(2)}</div>
