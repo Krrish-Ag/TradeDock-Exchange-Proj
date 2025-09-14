@@ -1,4 +1,4 @@
-import { Depth, Ticker } from "./types";
+import { Depth, Ticker, Trade } from "./types";
 
 export const BASE_URL = "wss://stream.binance.com:9443/ws";
 
@@ -36,7 +36,7 @@ export class WSClient {
     this.ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       const type = message.e;
-    //   console.log(message);
+      //   console.log(message);
       if (this.callbacks[type]) {
         if (type === "24hrTicker") {
           this.callbacks[type].forEach((xx) => {
@@ -62,6 +62,19 @@ export class WSClient {
             };
 
             xx.callback(newDepth);
+          });
+        } else if (type === "trade") {
+          this.callbacks[type].forEach((xx) => {
+            const newTrade: Trade = {
+              id: message.t,
+              isBuyerMaker: message.m,
+              price: message.p,
+              quantity: message.q,
+              timestamp: message.E,
+            };
+            console.log(newTrade);
+
+            xx.callback(newTrade);
           });
         }
       }

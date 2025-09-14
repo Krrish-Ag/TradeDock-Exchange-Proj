@@ -2,6 +2,7 @@
 import { MarketBar } from "@/app/components/MarketBar";
 import { SwapUI } from "@/app/components/SwapUi";
 import { TradeView } from "@/app/components/TradeView";
+import { Trades } from "@/app/components/Trades";
 import { Depth } from "@/app/components/for_depth/Depth";
 import { useParams } from "next/navigation";
 
@@ -18,7 +19,7 @@ export default function Page() {
           </div>
           <div className="w-[1px] flex-col border-slate-800 border-l"></div>
           <div className="flex flex-col w-[250px] overflow-hidden">
-            <Depth market={market as string} />
+            <Trades market={market as string} />
           </div>
         </div>
       </div>

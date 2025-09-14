@@ -1,0 +1,28 @@
+import { Trade } from "../../utils/types";
+
+export function TradeTable({ trades }: { trades: Trade[] }) {
+  return trades.map((trade, i) => {
+    return (
+      <div className="flex justify-between w-full">
+        <div
+          className={`${
+            i == trades.length - 1 || trades[i].price > trades[i + 1].price
+              ? "text-green-200"
+              : "text-red-200"
+          } font-semibold`}
+        >
+          {(+trade.price).toFixed(2)}
+        </div>
+        <div>{(+trade.quantity).toFixed(2)}</div>
+        <div>{formatDate(trade.timestamp)}</div>
+      </div>
+    );
+  });
+}
+
+function formatDate(timestamp: number) {
+  const date = new Date(timestamp);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(
+    date.getMinutes()
+  ).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")}`;
+}

@@ -17,7 +17,6 @@ export interface Trade {
   isBuyerMaker: boolean;
   price: string;
   quantity: string;
-  quoteQuantity: string;
   timestamp: number;
 }
 
