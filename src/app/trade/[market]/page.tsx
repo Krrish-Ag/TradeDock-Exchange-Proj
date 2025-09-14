@@ -8,16 +8,20 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function Page() {
-  const { market } = useParams();
+  const { market }: { market: string } = useParams();
+
+  //to replace the _, as binance needs no _, but I need that for images
+  const marketName = market.replace("_", "") || "";
+
   const [activeTab, setActiveTab] = useState<string>("Book");
 
   return (
     <div className="flex flex-row flex-1">
       <div className="flex flex-col flex-1">
-        <MarketBar market={market as string} />
+        <MarketBar market={marketName} marketWithUnderScore={market} />
         <div className="flex flex-row h-[620px] border-y border-slate-800">
           <div className="flex flex-col flex-1">
-            <TradeView market={market as string} />
+            <TradeView market={marketName} />
           </div>
           <div className="w-[1px] flex-col border-slate-800 border-l"></div>
           <div className="p-2 flex flex-col gap-2 w-[250px] overflow-hidden">
@@ -36,9 +40,9 @@ export default function Page() {
               </div>
             </div>
             {activeTab === "Book" ? (
-              <Depth market={market as string} />
+              <Depth market={marketName} />
             ) : (
-              <Trades market={market as string} />
+              <Trades market={marketName} />
             )}
           </div>
         </div>
@@ -46,7 +50,7 @@ export default function Page() {
       <div className="w-[1px] flex-col border-slate-800 border-l"></div>
       <div>
         <div className="flex flex-col w-[250px]">
-          <SwapUI market={market as string} />
+          <SwapUI market={marketName} marketWithUnderScore={market} />
         </div>
       </div>
     </div>

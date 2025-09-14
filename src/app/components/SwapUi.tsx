@@ -1,7 +1,14 @@
 "use client";
+import Image from "next/image";
 import { useState } from "react";
 
-export function SwapUI({ market }: { market: string }) {
+export function SwapUI({
+  market,
+  marketWithUnderScore,
+}: {
+  market: string;
+  marketWithUnderScore: string;
+}) {
   const [amount, setAmount] = useState("");
   const [activeTab, setActiveTab] = useState("buy");
   const [type, setType] = useState("limit");
@@ -46,7 +53,13 @@ export function SwapUI({ market }: { market: string }) {
                   />
                   <div className="flex flex-row absolute right-1 top-1 p-2">
                     <div className="relative">
-                      <img src="/usdc.webp" className="w-6 h-6" />
+                      <img
+                        alt="Symbol 1"
+                        src={`https://backpack.exchange/coins/${
+                          marketWithUnderScore.toLowerCase().split("_")[0]
+                        }.svg`}
+                        className="w-6 h-6"
+                      />
                     </div>
                   </div>
                 </div>
@@ -66,7 +79,13 @@ export function SwapUI({ market }: { market: string }) {
                 />
                 <div className="flex flex-row absolute right-1 top-1 p-2">
                   <div className="relative">
-                    <img src="/sol.webp" className="w-6 h-6" />
+                    <img
+                      alt="Symbol 2"
+                      src={`https://backpack.exchange/coins/${
+                        marketWithUnderScore.toLowerCase().split("_")[1]
+                      }.svg`}
+                      className="w-6 h-6"
+                    />
                   </div>
                 </div>
               </div>

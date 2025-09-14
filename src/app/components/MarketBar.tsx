@@ -5,7 +5,13 @@ import { getTicker } from "../utils/httpClient";
 import Image from "next/image";
 import { WSClient } from "../utils/RealTimeUtil";
 
-export const MarketBar = ({ market }: { market: string }) => {
+export const MarketBar = ({
+  market,
+  marketWithUnderScore,
+}: {
+  market: string;
+  marketWithUnderScore: string;
+}) => {
   const [ticker, setTicker] = useState<Ticker | null>(null);
 
   //this is so that when we mount the Marketbar, we register for the event ticker which then runs the cllback fn which actually expects data Ticker and then updat teh ticker for Marketbar using setTicker
@@ -65,7 +71,7 @@ export const MarketBar = ({ market }: { market: string }) => {
     <div>
       <div className="flex items-center p-2 flex-row relative w-full overflow-hidden border-b border-slate-800">
         <div className="flex items-center justify-between flex-row no-scrollbar overflow-auto pr-4">
-          <TickerFn market={market} />
+          <TickerFn marketWithUnderScore={marketWithUnderScore} />
           <div className="flex items-center flex-row space-x-8 pl-4">
             <div className="flex flex-col h-full justify-center">
               <p
@@ -122,7 +128,7 @@ export const MarketBar = ({ market }: { market: string }) => {
   );
 };
 
-function TickerFn({ market }: { market: string }) {
+function TickerFn({ marketWithUnderScore }: { marketWithUnderScore: string }) {
   return (
     <div className="flex gap-4 h-[60px] shrink-0 space-x-4">
       <div className="flex flex-row relative ml-2 -mr-4">
@@ -134,7 +140,9 @@ function TickerFn({ market }: { market: string }) {
           decoding="async"
           data-nimg="1"
           className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-          src="/sol.webp"
+          src={`https://backpack.exchange/coins/${
+            marketWithUnderScore.toLowerCase().split("_")[0]
+          }.svg`}
         />
         <Image
           width={100}
@@ -144,7 +152,9 @@ function TickerFn({ market }: { market: string }) {
           decoding="async"
           data-nimg="1"
           className="h-6 w-6 -ml-2 mt-4 rounded-full"
-          src="/usdc.webp"
+          src={`https://backpack.exchange/coins/${
+            marketWithUnderScore.toLowerCase().split("_")[1]
+          }.svg`}
         />
       </div>
       <button type="button" className="react-aria-Button" data-rac="">
@@ -152,7 +162,7 @@ function TickerFn({ market }: { market: string }) {
           <div className="flex items-center flex-row gap-2 undefined">
             <div className="flex flex-row relative">
               <p className="font-medium text-sm undefined">
-                {market.replace("_", " / ")}
+                {marketWithUnderScore.replace("_", " / ")}
               </p>
             </div>
           </div>
