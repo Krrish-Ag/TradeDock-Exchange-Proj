@@ -1,5 +1,7 @@
 export const BidTable = ({ bids }: { bids: [string, string][] }) => {
   let currentTotal = 0;
+  bids.sort();
+
   const currBids = bids.slice(0, 15);
   bids.reverse();
   // console.log(currBids);
@@ -60,7 +62,7 @@ function Bid({
       ></div>
       <div className="flex justify-between w-full">
         <div className="text-green-200">{(+price).toFixed(2)}</div>
-        <div>{(+price).toFixed(2)}</div>
+        <div>{(+quantity).toFixed(2)}</div>
         <div>{total?.toFixed(2)}</div>
       </div>
     </div>

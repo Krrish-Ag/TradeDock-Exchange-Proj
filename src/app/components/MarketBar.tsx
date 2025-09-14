@@ -36,7 +36,7 @@ export const MarketBar = ({ market }: { market: string }) => {
       params: [
         `${market.toLowerCase()}@ticker`,
         `${market.toLowerCase()}@trade`,
-        `${market.toLowerCase()}@depth`,
+        `${market.toLowerCase()}@depth@100ms`,
       ],
     });
 
@@ -50,7 +50,7 @@ export const MarketBar = ({ market }: { market: string }) => {
         params: [
           `${market.toLowerCase()}@ticker`,
           `${market.toLowerCase()}@trade`,
-          `${market.toLowerCase()}@depth`,
+          `${market.toLowerCase()}@depth@100ms`,
         ],
       });
       WSClient.getInstance().deRegisterCallBack("trade", `trade-${market}`);

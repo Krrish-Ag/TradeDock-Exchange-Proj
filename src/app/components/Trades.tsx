@@ -14,14 +14,6 @@ export function Trades({ market }: { market: string }) {
       setTrades(d);
     });
 
-    // WSClient.getInstance().sendMessage({
-    //   method: "SUBSCRIBE",
-    //   params: [
-    //     `${market.toLowerCase()}@trade`,
-    //     // `${market.toLowerCase()}@depth`,
-    //   ],
-    // });
-
     //for the latest price in trades
     WSClient.getInstance().registerCallBack(
       "trade",
@@ -44,22 +36,7 @@ export function Trades({ market }: { market: string }) {
       `trade-${market}`
     );
 
-    //for the last price
-
-    // WSClient.getInstance().registerCallBack(
-    //   "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
-    //   (data: Partial<Ticker>) =>
-    //     setPrice((prevPrice) => data?.lastPrice ?? prevPrice ?? ""),
-    //   `TICKER-${market}`
-    // );
-
-    return () => {
-      // WSClient.getInstance().sendMessage({
-      //   method: "UNSUBSCRIBE",
-      //   params: [`${market.toLowerCase()}@trade`],
-      // });
-      // WSClient.getInstance().deRegisterCallBack("trade", `trade-${market}`);
-    };
+    return () => {};
   }, [market]);
 
   return (

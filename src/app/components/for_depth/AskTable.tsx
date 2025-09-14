@@ -1,6 +1,8 @@
 //asks: [price,size][]
 export const AskTable = ({ asks }: { asks: [string, string][] }) => {
   let currentTotal = 0;
+  asks.sort();
+
   const relevantAsks = asks.slice(0, 15);
 
   relevantAsks.reverse();
@@ -66,7 +68,7 @@ function Ask({
       ></div>
       <div className="flex justify-between w-full">
         <div className="text-red-200">{(+price).toFixed(2)}</div>
-        <div>{(+price).toFixed(2)}</div>
+        <div>{(+quantity).toFixed(2)}</div>
         <div>{total?.toFixed(2)}</div>
       </div>
     </div>
