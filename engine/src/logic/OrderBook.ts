@@ -18,6 +18,7 @@ export interface Fill {
 }
 
 export class OrderBook {
+  //these asks and bids array carry all the asks and bids made by users with their data as well, have a separate fn for the depth
   bids: Order[];
   asks: Order[];
   baseAsset: string;
@@ -161,6 +162,37 @@ export class OrderBook {
       fills,
       executedQty,
     };
+  }
+
+  getDepth() {
+    const bidsDep: { [key: string]: number } = {};
+    const asksDep: { [key: string]: number } = {};
+
+    const bids: [string, string][] = [];
+    const asks: [string, string][] = [];
+
+    for (let i = 0; i < this.bids.length; i++) {
+      if (!bidsDep[this.bids[i].price]) {
+        bidsDep[this.bids[i].price] = 0;
+      }
+      bidsDep[this.bids[i].price] += this.bids[i].quantity;
+    }
+
+    for (let i = 0; i < this.asks.length; i++) {
+      if (!asksDep[this.asks[i].price]) {
+        asksDep[this.asks[i].price] = 0;
+      }
+      asksDep[this.asks[i].price] += this.asks[i].quantity;
+    }
+
+    for (const price in bidsDep) {
+      bids.push([price, bidsDep[price].toString()]);
+    }
+    for (const price in asksDep) {
+      bids.push([price, asksDep[price].toString()]);
+    }
+
+    return { bids, asks };
   }
 
   //get open active orders for the user asked for
