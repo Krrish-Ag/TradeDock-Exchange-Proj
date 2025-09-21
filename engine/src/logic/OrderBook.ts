@@ -53,6 +53,40 @@ export class OrderBook {
     };
   }
 
+  addOrder(order: Order) {
+    //updating the filled property of the order and then pushing it into the in memory asks or bids only if order not fulfilled with current orderbook
+
+    if (order.side === "buy") {
+      const { executedQty, fills } = this.matchBid(order);
+      order.filled = executedQty;
+      if (order.filled === order.quantity) {
+        return {
+          executedQty,
+          fills,
+        };
+      }
+      this.bids.push(order);
+      return {
+        executedQty,
+        fills,
+      };
+    } else {
+      const { executedQty, fills } = this.matchAsk(order);
+      order.filled = executedQty;
+      if (order.filled === order.quantity) {
+        return {
+          executedQty,
+          fills,
+        };
+      }
+      this.asks.push(order);
+      return {
+        executedQty,
+        fills,
+      };
+    }
+  }
+
   //match the bid in order as per the current asks
   matchBid(order: Order) {
     const fills: Fill[] = [];
@@ -77,6 +111,7 @@ export class OrderBook {
       }
     }
 
+    //removing those asks where utilized all the qty that teher was
     for (let i = 0; i < this.asks.length; i++) {
       if (this.asks[i].filled === this.asks[i].quantity) {
         this.asks.splice(i, 1);
@@ -114,6 +149,7 @@ export class OrderBook {
       }
     }
 
+    //removing those bids where utilized all the qty that teher was
     for (let i = 0; i < this.bids.length; i++) {
       if (this.bids[i].filled === this.bids[i].quantity) {
         this.bids.splice(i, 1);
