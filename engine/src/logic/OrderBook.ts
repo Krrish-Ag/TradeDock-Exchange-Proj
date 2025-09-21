@@ -53,6 +53,7 @@ export class OrderBook {
     };
   }
 
+  //match the bid in order as per the current asks
   matchBid(order: Order) {
     const fills: Fill[] = [];
     let executedQty = 0;
@@ -89,6 +90,7 @@ export class OrderBook {
     };
   }
 
+  //match the ask in order as per the current bids
   matchAsk(order: Order) {
     const fills: Fill[] = [];
     let executedQty = 0;
@@ -123,5 +125,32 @@ export class OrderBook {
       fills,
       executedQty,
     };
+  }
+
+  //get open active orders for the user asked for
+  getOpenOrders(userId: string) {
+    const bids = this.bids.filter((xx) => xx.userId === userId);
+    const asks = this.asks.filter((xx) => xx.userId === userId);
+    return [...bids, ...asks];
+  }
+
+  //cancel an open bid using orderId
+  cancelBid(order: Order) {
+    const idx = this.bids.findIndex((xx) => xx.orderId === order.orderId);
+    if (idx !== -1) {
+      const price = this.bids[idx].price;
+      this.bids.splice(idx, 1);
+      return price;
+    }
+  }
+
+  //cancel an open ask using orderId
+  cancelAsk(order: Order) {
+    const idx = this.asks.findIndex((xx) => xx.orderId === order.orderId);
+    if (idx !== -1) {
+      const price = this.asks[idx].price;
+      this.asks.splice(idx, 1);
+      return price;
+    }
   }
 }
