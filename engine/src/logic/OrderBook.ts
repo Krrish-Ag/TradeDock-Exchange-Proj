@@ -95,6 +95,9 @@ export class OrderBook {
 
     for (let i = 0; i < this.asks.length; i++) {
       if (executedQty < order.quantity && order.price < this.asks[i].price) {
+        //to avoid self-transfers
+        if (this.asks[i].userId === order.userId) continue;
+
         const quantityGiven = Math.min(
           order.quantity - executedQty,
           this.asks[i].quantity
@@ -132,6 +135,9 @@ export class OrderBook {
     let executedQty = 0;
 
     for (let i = 0; i < this.bids.length; i++) {
+      //to avoid self-transfers
+      if (this.asks[i].userId === order.userId) continue;
+
       if (executedQty < order.quantity && order.price < this.bids[i].price) {
         const quantityTaken = Math.min(
           order.quantity - executedQty,
@@ -165,12 +171,14 @@ export class OrderBook {
   }
 
   getDepth() {
-    const bidsDep: { [key: string]: number } = {};
+    const bidsDep: Record<string, number> = {};
     const asksDep: { [key: string]: number } = {};
 
+    //need to return these 2 sized array for asks and bids, full info not needed
     const bids: [string, string][] = [];
     const asks: [string, string][] = [];
 
+    //to accumulate same price orders
     for (let i = 0; i < this.bids.length; i++) {
       if (!bidsDep[this.bids[i].price]) {
         bidsDep[this.bids[i].price] = 0;
@@ -178,6 +186,7 @@ export class OrderBook {
       bidsDep[this.bids[i].price] += this.bids[i].quantity;
     }
 
+    //to accumulate same price orders
     for (let i = 0; i < this.asks.length; i++) {
       if (!asksDep[this.asks[i].price]) {
         asksDep[this.asks[i].price] = 0;
