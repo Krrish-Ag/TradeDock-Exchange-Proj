@@ -136,6 +136,23 @@ class Engine {
           console.log("Error while cancelling the order");
           console.log("ERROR", error);
         }
+      case GET_OPEN_ORDERS:
+        try {
+          const openOrderBook = this.orderbooks.find(
+            (xx) => xx.ticker() === message.data.market
+          );
+          if (!openOrderBook) throw new Error("No orderboo/market like that");
+
+          const openOrders = openOrderBook.getOpenOrders(clientId);
+
+          RedisManager.getInstance().sendToApi(clientId, {
+            type: "OPEN_ORDERS",
+            payload: openOrders,
+          });
+        } catch (error) {
+          console.log("Error while fetching open orders");
+          console.log("ERROR", error);
+        }
     }
   }
 }
