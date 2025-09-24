@@ -1,4 +1,4 @@
-import { BASE_CURRENCY } from "./Engine";
+import { QUOTE_CURRENCY } from "./Engine";
 
 export interface Order {
   price: number;
@@ -22,7 +22,7 @@ export class OrderBook {
   bids: Order[];
   asks: Order[];
   baseAsset: string;
-  quoteAsset: string = BASE_CURRENCY;
+  quoteAsset: string = QUOTE_CURRENCY;
   lastTradeId: number;
   currentPrice: number;
 
