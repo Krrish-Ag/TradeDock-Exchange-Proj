@@ -11,6 +11,7 @@ export type TikcerUpdateType = {
     q?: string;
     p?: string;
     P?: string;
+    e: "24hrTicker";
   };
 };
 
@@ -19,6 +20,7 @@ export type DepthUpdateType = {
   data: {
     b: [string, string][];
     a: [string, string][];
+    e: "depthUpdate";
   };
 };
 
@@ -29,6 +31,7 @@ export type TradeAddedType = {
     m?: boolean;
     p?: string;
     q?: string;
+    e: "trade";
   };
 };
 

@@ -192,6 +192,47 @@ class Engine {
     this.orderbooks.push(orderBook);
   }
 
+  publishWsTrades(market: string, userId: string, fills: Fill[]) {
+    fills.forEach((fill) => {
+      RedisManager.getInstance().publishMessage(
+        `${market.toLowerCase()}@trade`,
+        {
+          stream: `${market.toLowerCase()}@trade`,
+          data: {
+            t: fill.tradeId,
+            m: fill.otherUserId === userId,     //have a litle doubt here
+            p: fill.price,
+            q: fill.qty.toString(),
+            e: "trade",
+          },
+        }
+      );
+    });
+  }
+
+  sendUpdateDepth(price: string, market: string) {
+    const orderBook = this.orderbooks.find((xx) => xx.ticker() === market);
+    if (!orderBook) {
+      throw new Error("No such orderbook available");
+    }
+
+    const depth = orderBook.getDepth();
+    const updatedBids = depth.bids.filter((xx) => xx[0] === price);
+    const updatedAsks = depth.asks.filter((xx) => xx[0] === price);
+
+    RedisManager.getInstance().publishMessage(
+      `${market.toLowerCase()}@depth@100ms`,
+      {
+        stream: `${market.toLowerCase()}@depth@100ms`,
+        data: {
+          b: updatedBids.length ? updatedBids : [[price, "0"]],
+          a: updatedAsks.length ? updatedAsks : [[price, "0"]],
+          e: "depthUpdate",
+        },
+      }
+    );
+  }
+
   updateBalances(
     baseAsset: string,
     quoteAsset: string,
