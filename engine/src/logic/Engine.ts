@@ -1,5 +1,5 @@
 import fs from "fs";
-import { OrderBook } from "./OrderBook";
+import { Fill, OrderBook } from "./OrderBook";
 import {
   CANCEL_ORDER,
   CREATE_ORDER,
@@ -190,6 +190,68 @@ class Engine {
 
   addOrderBook(orderBook: OrderBook) {
     this.orderbooks.push(orderBook);
+  }
+
+  updateBalances(
+    baseAsset: string,
+    quoteAsset: string,
+    price: number,
+    quantity: number,
+    userId: string,
+    side: "buy" | "sell",
+    fills: Fill[]
+  ) {
+    if (side === "buy") {
+      fills.forEach((fill) => {
+        //upfating quote asset
+
+        //@ts-ignore
+        this.balances.get(fill.otherUserId)[quoteAsset].available =
+          (this.balances.get(fill.otherUserId)?.[quoteAsset]?.available || 0) +
+          fill.qty * fill.price;
+
+        //@ts-ignore
+        this.balances.get(userId)[quoteAsset].locked =
+          (this.balances.get(userId)?.[baseAsset]?.locked || 0) -
+          fill.qty * fill.price;
+
+        //updating base assets
+
+        //@ts-ignore
+        this.balances.get(fill.otherUserId)[baseAsset].locked =
+          (this.balances.get(fill.otherUserId)?.[baseAsset]?.locked || 0) -
+          fill.qty;
+
+        //@ts-ignore
+        this.balances.get(userId)[baseAsset].available =
+          (this.balances.get(userId)?.[baseAsset]?.available || 0) + fill.qty;
+      });
+    } else {
+      fills.forEach((fill) => {
+        //updating quote assets
+
+        //@ts-ignore
+        this.balances.get(fill.otherUserId)[quoteAsset].locked =
+          (this.balances.get(fill.otherUserId)?.[quoteAsset]?.locked || 0) +
+          fill.qty * fill.price;
+
+        //@ts-ignore
+        this.balances.get(userId)[quoteAsset].available =
+          (this.balances.get(userId)?.[baseAsset]?.available || 0) -
+          fill.qty * fill.price;
+
+        //updating base assets
+
+        //@ts-ignore
+        this.balances.get(fill.otherUserId)[baseAsset].available =
+          (this.balances.get(fill.otherUserId)?.[baseAsset]?.available || 0) -
+          fill.qty;
+
+        //@ts-ignore
+        this.balances.get(userId)[baseAsset].locked =
+          (this.balances.get(userId)?.[baseAsset]?.locked || 0) + fill.qty;
+      });
+    }
   }
 
   verifyAndLock(
