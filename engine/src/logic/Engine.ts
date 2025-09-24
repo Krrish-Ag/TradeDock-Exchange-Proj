@@ -192,6 +192,44 @@ class Engine {
     this.orderbooks.push(orderBook);
   }
 
+  verifyAndLock(
+    baseAsset: string,
+    quoteAsset: string,
+    price: number,
+    quantity: number,
+    userId: string,
+    side: "buy" | "sell"
+  ) {
+    if (side === "buy") {
+      if (
+        (this.balances.get(userId)?.[quoteAsset]?.available || 0) <
+        price * quantity
+      )
+        throw new Error("Insufficient quote currency");
+
+      //@ts-ignore
+      this.balances.get(userId)[quoteAsset].available =
+        (this.balances.get(userId)?.[quoteAsset]?.available || 0) -
+        price * quantity;
+
+      //@ts-ignore
+      this.balances.get(userId)[quoteAsset].locked =
+        (this.balances.get(userId)?.[quoteAsset]?.locked || 0) +
+        price * quantity;
+    } else {
+      if ((this.balances.get(userId)?.[baseAsset]?.available || 0) < quantity)
+        throw new Error("Insufficient base asset");
+
+      //@ts-ignore
+      this.balances.get(userId)[baseAsset].available =
+        (this.balances.get(userId)?.[baseAsset]?.available || 0) - quantity;
+
+      //@ts-ignore
+      this.balances.get(userId)[baseAsset].locked =
+        (this.balances.get(userId)?.[baseAsset]?.locked || 0) + quantity;
+    }
+  }
+
   onRamp(userId: string, amount: number) {
     const userBalance = this.balances.get(userId);
     if (!userBalance) {
