@@ -154,22 +154,31 @@ class Engine {
           console.log("Error while fetching open orders");
           console.log("ERROR", error);
         }
-
+        break;
       case GET_DEPTH:
-        const OrderBook = this.orderbooks.find(
-          (xx) => xx.ticker() === message.data.market
-        );
-        if (!OrderBook) throw new Error("No orderbook/market like that");
+        try {
+          const OrderBook = this.orderbooks.find(
+            (xx) => xx.ticker() === message.data.market
+          );
+          if (!OrderBook) throw new Error("No orderbook/market like that");
 
-        const depth = OrderBook.getDepth();
+          const depth = OrderBook.getDepth();
 
-        RedisManager.getInstance().sendToApi(clientId, {
-          type: "DEPTH",
-          payload: {
-            bids: depth.bids,
-            asks: depth.asks,
-          },
-        });
+          RedisManager.getInstance().sendToApi(clientId, {
+            type: "DEPTH",
+            payload: depth,
+          });
+        } catch (error) {
+          console.log("ERROR", error);
+          RedisManager.getInstance().sendToApi(clientId, {
+            type: "DEPTH",
+            payload: {
+              bids: [],
+              asks: [],
+            },
+          });
+        }
+        break;
     }
   }
 }
