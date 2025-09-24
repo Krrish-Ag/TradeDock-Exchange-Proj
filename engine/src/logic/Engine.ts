@@ -3,6 +3,7 @@ import { OrderBook } from "./OrderBook";
 import {
   CANCEL_ORDER,
   CREATE_ORDER,
+  GET_DEPTH,
   GET_OPEN_ORDERS,
   MessageFromApi,
 } from "../types/fromApi";
@@ -141,7 +142,7 @@ class Engine {
           const openOrderBook = this.orderbooks.find(
             (xx) => xx.ticker() === message.data.market
           );
-          if (!openOrderBook) throw new Error("No orderboo/market like that");
+          if (!openOrderBook) throw new Error("No orderbook/market like that");
 
           const openOrders = openOrderBook.getOpenOrders(clientId);
 
@@ -153,6 +154,22 @@ class Engine {
           console.log("Error while fetching open orders");
           console.log("ERROR", error);
         }
+
+      case GET_DEPTH:
+        const OrderBook = this.orderbooks.find(
+          (xx) => xx.ticker() === message.data.market
+        );
+        if (!OrderBook) throw new Error("No orderbook/market like that");
+
+        const depth = OrderBook.getDepth();
+
+        RedisManager.getInstance().sendToApi(clientId, {
+          type: "DEPTH",
+          payload: {
+            bids: depth.bids,
+            asks: depth.asks,
+          },
+        });
     }
   }
 }
