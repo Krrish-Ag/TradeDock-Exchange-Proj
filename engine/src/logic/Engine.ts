@@ -192,6 +192,24 @@ class Engine {
     this.orderbooks.push(orderBook);
   }
 
+  onRamp(userId: string, amount: number) {
+    const userBalance = this.balances.get(userId);
+    if (!userBalance) {
+      this.balances.set(userId, {
+        [QUOTE_CURRENCY]: {
+          available: amount,
+          locked: 0,
+        },
+        [BASE_ASSET]: {
+          available: 0,
+          locked: 0,
+        },
+      });
+    } else {
+      userBalance[QUOTE_CURRENCY].available += amount;
+    }
+  }
+
   setBaseBalances() {
     this.balances.set("1", {
       [QUOTE_CURRENCY]: {
