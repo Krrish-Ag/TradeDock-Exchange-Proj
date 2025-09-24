@@ -6,11 +6,12 @@ import {
   GET_DEPTH,
   GET_OPEN_ORDERS,
   MessageFromApi,
+  ON_RAMP,
 } from "../types/fromApi";
 import { RedisManager } from "../RedisManager";
 
 interface UserBalance {
-  [key: number]: {
+  [key: string]: {
     available: number;
     locked: number;
   };
@@ -179,6 +180,50 @@ class Engine {
           });
         }
         break;
+      case ON_RAMP:
+        const userId = message.data.userId;
+        const amount = Number(message.data.amount);
+        this.onRamp(userId, amount);
+        break;
     }
+  }
+
+  addOrderBook(orderBook: OrderBook) {
+    this.orderbooks.push(orderBook);
+  }
+
+  setBaseBalances() {
+    this.balances.set("1", {
+      [QUOTE_CURRENCY]: {
+        available: 10000000,
+        locked: 0,
+      },
+      TATA: {
+        available: 10000000,
+        locked: 0,
+      },
+    });
+
+    this.balances.set("2", {
+      [QUOTE_CURRENCY]: {
+        available: 10000000,
+        locked: 0,
+      },
+      TATA: {
+        available: 10000000,
+        locked: 0,
+      },
+    });
+
+    this.balances.set("5", {
+      [QUOTE_CURRENCY]: {
+        available: 10000000,
+        locked: 0,
+      },
+      TATA: {
+        available: 10000000,
+        locked: 0,
+      },
+    });
   }
 }
