@@ -108,7 +108,7 @@ class Engine {
 
             const price = cancelOrderbook?.cancelBid(order);
             if (price) {
-              this.sendUpdatedDepthAt(price.toString(), cancelMarket);
+              this.sendUpdatedDepth(price.toString(), cancelMarket);
             }
           } else {
             //only chnage the quantity as dealing with base asset
@@ -122,7 +122,7 @@ class Engine {
 
             const price = cancelOrderbook?.cancelAsk(order);
             if (price) {
-              this.sendUpdatedDepthAt(price.toString(), cancelMarket);
+              this.sendUpdatedDepth(price.toString(), cancelMarket);
             }
           }
 
@@ -192,6 +192,58 @@ class Engine {
     this.orderbooks.push(orderBook);
   }
 
+  createOrder(
+    market: string,
+    quantity: string,
+    price: string,
+    side: "buy" | "sell",
+    userId: string
+  ) {
+    const orderBook = this.orderbooks.find((xx) => xx.ticker() === market);
+    const baseAsset = market.split("_")[0];
+    const quoteAsset = market.split("_")[1];
+
+    if (!orderBook) {
+      throw new Error("No orderbook found");
+    }
+
+    this.verifyAndLockFunds(
+      baseAsset,
+      quoteAsset,
+      price,
+      quantity,
+      userId,
+      side
+    );
+
+    const order: Order = {
+      price: +price,
+      quantity: +quantity,
+      filled: 0,
+      side,
+      userId,
+      orderId:
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15),
+    };
+
+    const { fills, executedQty } = orderBook.addOrder(order);
+
+    this.updateBalances(
+      baseAsset,
+      quoteAsset,
+      price,
+      quantity,
+      userId,
+      side,
+      fills
+    );
+    this.createDbTrades(fills, market, userId);
+    this.updateDbOrders(fills, order, executedQty, market);
+    this.publishWsTrades(market, userId, fills);
+    this.publishWsDepthUpdates(fills, price, side, market);
+  }
+
   updateDbOrders(
     fills: Fill[],
     order: Order,
@@ -223,7 +275,7 @@ class Engine {
     });
   }
 
-  createDbOrders(fills: Fill[], market: string, userId: string) {
+  createDbTrades(fills: Fill[], market: string, userId: string) {
     fills.forEach((fill) => {
       //each fill etting added as a sepasrate trade
       RedisManager.getInstance().pushMessage({
@@ -260,7 +312,7 @@ class Engine {
     });
   }
 
-  sendUpdateDepth(price: string, market: string) {
+  sendUpdatedDepth(price: string, market: string) {
     const orderBook = this.orderbooks.find((xx) => xx.ticker() === market);
     if (!orderBook) {
       throw new Error("No such orderbook available");
@@ -283,11 +335,60 @@ class Engine {
     );
   }
 
+  publishWsDepthUpdates(
+    fills: Fill[],
+    price: string,
+    side: "buy" | "sell",
+    market: string
+  ) {
+    const orderBook = this.orderbooks.find((xx) => xx.ticker() === market);
+    if (!orderBook) {
+      throw new Error("No such orderbook available");
+    }
+
+    const depth = orderBook.getDepth();
+    if (side === "buy") {
+      const updatedAsks = depth.asks.filter((x) =>
+        fills.forEach((fill) => fill.price === x[0])
+      );
+      const updatedBid = depth.bids.find((x) => x[0] === price);
+      console.log("publish ws depth updates");
+      RedisManager.getInstance().publishMessage(
+        `${market.toLowerCase()}@depth@100ms`,
+        {
+          stream: `${market.toLowerCase()}@depth@100ms`,
+          data: {
+            a: updatedAsks,
+            b: updatedBid ? [updatedBid] : [],
+            e: "depthUpdate",
+          },
+        }
+      );
+    } else {
+      const updatedBids = depth.bids.filter((x) =>
+        fills.forEach((fill) => fill.price === x[0])
+      );
+      const updatedAsk = depth.asks.find((x) => x[0] === price);
+      console.log("publish ws depth updates");
+      RedisManager.getInstance().publishMessage(
+        `${market.toLowerCase()}@depth@100ms`,
+        {
+          stream: `${market.toLowerCase()}@depth@100ms`,
+          data: {
+            a: updatedAsk ? [updatedAsk] : [],
+            b: updatedBids,
+            e: "depthUpdate",
+          },
+        }
+      );
+    }
+  }
+
   updateBalances(
     baseAsset: string,
     quoteAsset: string,
-    price: number,
-    quantity: number,
+    price: string,
+    quantity: string,
     userId: string,
     side: "buy" | "sell",
     fills: Fill[]
@@ -299,12 +400,12 @@ class Engine {
         //@ts-ignore
         this.balances.get(fill.otherUserId)[quoteAsset].available =
           (this.balances.get(fill.otherUserId)?.[quoteAsset]?.available || 0) +
-          fill.qty * fill.price;
+          fill.qty * Number(fill.price);
 
         //@ts-ignore
         this.balances.get(userId)[quoteAsset].locked =
           (this.balances.get(userId)?.[baseAsset]?.locked || 0) -
-          fill.qty * fill.price;
+          fill.qty * Number(fill.price);
 
         //updating base assets
 
@@ -324,12 +425,12 @@ class Engine {
         //@ts-ignore
         this.balances.get(fill.otherUserId)[quoteAsset].locked =
           (this.balances.get(fill.otherUserId)?.[quoteAsset]?.locked || 0) +
-          fill.qty * fill.price;
+          fill.qty * Number(fill.price);
 
         //@ts-ignore
         this.balances.get(userId)[quoteAsset].available =
           (this.balances.get(userId)?.[baseAsset]?.available || 0) -
-          fill.qty * fill.price;
+          fill.qty * Number(fill.price);
 
         //updating base assets
 
@@ -345,41 +446,46 @@ class Engine {
     }
   }
 
-  verifyAndLock(
+  verifyAndLockFunds(
     baseAsset: string,
     quoteAsset: string,
-    price: number,
-    quantity: number,
+    price: string,
+    quantity: string,
     userId: string,
     side: "buy" | "sell"
   ) {
     if (side === "buy") {
       if (
         (this.balances.get(userId)?.[quoteAsset]?.available || 0) <
-        price * quantity
+        Number(price) * Number(quantity)
       )
         throw new Error("Insufficient quote currency");
 
       //@ts-ignore
       this.balances.get(userId)[quoteAsset].available =
         (this.balances.get(userId)?.[quoteAsset]?.available || 0) -
-        price * quantity;
+        Number(price) * Number(quantity);
 
       //@ts-ignore
       this.balances.get(userId)[quoteAsset].locked =
         (this.balances.get(userId)?.[quoteAsset]?.locked || 0) +
-        price * quantity;
+        Number(price) * Number(quantity);
     } else {
-      if ((this.balances.get(userId)?.[baseAsset]?.available || 0) < quantity)
+      if (
+        (this.balances.get(userId)?.[baseAsset]?.available || 0) <
+        Number(quantity)
+      )
         throw new Error("Insufficient base asset");
 
       //@ts-ignore
       this.balances.get(userId)[baseAsset].available =
-        (this.balances.get(userId)?.[baseAsset]?.available || 0) - quantity;
+        (this.balances.get(userId)?.[baseAsset]?.available || 0) -
+        Number(quantity);
 
       //@ts-ignore
       this.balances.get(userId)[baseAsset].locked =
-        (this.balances.get(userId)?.[baseAsset]?.locked || 0) + quantity;
+        (this.balances.get(userId)?.[baseAsset]?.locked || 0) +
+        Number(quantity);
     }
   }
 
