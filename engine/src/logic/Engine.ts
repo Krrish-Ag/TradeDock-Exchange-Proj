@@ -242,6 +242,8 @@ class Engine {
     this.updateDbOrders(fills, order, executedQty, market);
     this.publishWsTrades(market, userId, fills);
     this.publishWsDepthUpdates(fills, price, side, market);
+
+    return { executedQty, fills, orderId: order.orderId };
   }
 
   updateDbOrders(
