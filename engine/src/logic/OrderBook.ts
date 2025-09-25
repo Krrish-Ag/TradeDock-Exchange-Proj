@@ -106,7 +106,7 @@ export class OrderBook {
         this.asks[i].filled += quantityGiven;
 
         fills.push({
-          price: this.asks[i].price,
+          price: String(this.asks[i].price),
           qty: quantityGiven,
           tradeId: this.lastTradeId++,
           otherUserId: this.asks[i].userId,
@@ -147,7 +147,7 @@ export class OrderBook {
         this.bids[i].filled += quantityTaken;
 
         fills.push({
-          price: this.bids[i].price,
+          price: String(this.bids[i].price),
           qty: quantityTaken,
           tradeId: this.lastTradeId++,
           otherUserId: this.bids[i].userId,

@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Fill, OrderBook } from "./OrderBook";
+import { Fill, Order, OrderBook } from "./OrderBook";
 import {
   CANCEL_ORDER,
   CREATE_ORDER,
@@ -192,6 +192,56 @@ class Engine {
     this.orderbooks.push(orderBook);
   }
 
+  updateDbOrders(
+    fills: Fill[],
+    order: Order,
+    executedQty: number,
+    market: string
+  ) {
+    //adding the requested order
+    RedisManager.getInstance().pushMessage({
+      type: "ORDER_UPDATE",
+      data: {
+        orderId: order.orderId,
+        executedQty: executedQty,
+        market,
+        price: order.price.toString(),
+        quantity: order.quantity.toString(),
+        side: order.side,
+      },
+    });
+
+    //adding the fills which tried to completed that order
+    fills.forEach((fill) => {
+      RedisManager.getInstance().pushMessage({
+        type: "ORDER_UPDATE",
+        data: {
+          orderId: fill.markerOrderId,
+          executedQty: fill.qty,
+        },
+      });
+    });
+  }
+
+  createDbOrders(fills: Fill[], market: string, userId: string) {
+    fills.forEach((fill) => {
+      //each fill etting added as a sepasrate trade
+      RedisManager.getInstance().pushMessage({
+        type: "TRADE_ADDED",
+        data: {
+          id: fill.tradeId.toString(),
+          isBuyerMaker: fill.otherUserId === userId,
+          price: fill.price,
+          quantity: fill.qty.toString(),
+          quoteQuantity: (fill.qty * Number(fill.price)).toString(),
+          timestamp: Date.now(),
+          market,
+        },
+      });
+    });
+  }
+
+  //these data vars, the way I used them in client, like how binance used to give
   publishWsTrades(market: string, userId: string, fills: Fill[]) {
     fills.forEach((fill) => {
       RedisManager.getInstance().publishMessage(
@@ -200,7 +250,7 @@ class Engine {
           stream: `${market.toLowerCase()}@trade`,
           data: {
             t: fill.tradeId,
-            m: fill.otherUserId === userId,     //have a litle doubt here
+            m: fill.otherUserId === userId, //have a litle doubt here
             p: fill.price,
             q: fill.qty.toString(),
             e: "trade",
