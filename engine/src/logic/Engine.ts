@@ -66,7 +66,7 @@ class Engine {
     fs.writeFileSync("./snapshot.json", JSON.stringify(snapshotToSave));
   }
 
-  //
+  //this acts as a ROUTER, depending on message.type, it calls the relevant set of functions and also talks with redis
   process({
     message,
     clientId,
@@ -221,6 +221,7 @@ class Engine {
     }
   }
 
+  //if need 
   addOrderBook(orderBook: OrderBook) {
     this.orderbooks.push(orderBook);
   }
@@ -240,6 +241,7 @@ class Engine {
       throw new Error("No orderbook found");
     }
 
+    //to check if user can afford the trade
     this.verifyAndLockFunds(
       baseAsset,
       quoteAsset,
@@ -260,6 +262,7 @@ class Engine {
         Math.random().toString(36).substring(2, 15),
     };
 
+    //adds order to the right orderbook
     const { fills, executedQty } = orderBook.addOrder(order);
 
     this.updateBalances(
@@ -279,6 +282,7 @@ class Engine {
     return { executedQty, fills, orderId: order.orderId };
   }
 
+  //sending the message via redis to update db order
   updateDbOrders(
     fills: Fill[],
     order: Order,
@@ -310,6 +314,7 @@ class Engine {
     });
   }
 
+  //Send messages to queue to add the trade
   createDbTrades(fills: Fill[], market: string, userId: string) {
     fills.forEach((fill) => {
       //each fill etting added as a sepasrate trade
@@ -328,7 +333,7 @@ class Engine {
     });
   }
 
-  //these data vars, the way I used them in client, like how binance used to give
+  //used to Publish real-time event data to a Redis for FRONTEND. these data keys, the way I used them in client, like how binance used to give
   publishWsTrades(market: string, userId: string, fills: Fill[]) {
     fills.forEach((fill) => {
       RedisManager.getInstance().publishMessage(
@@ -370,6 +375,7 @@ class Engine {
     );
   }
 
+  //used to Publish real-time event data to a Redis for FRONTEND.
   publishWsDepthUpdates(
     fills: Fill[],
     price: string,
@@ -419,6 +425,7 @@ class Engine {
     }
   }
 
+  //A "post-trade" function actually changing the money and assets between the buyer and the seller, finalizing the transaction.
   updateBalances(
     baseAsset: string,
     quoteAsset: string,
@@ -481,6 +488,7 @@ class Engine {
     }
   }
 
+  //this is a "pre-trade" check to ensure that a user actually has enough available funds for an order.
   verifyAndLockFunds(
     baseAsset: string,
     quoteAsset: string,
@@ -524,6 +532,7 @@ class Engine {
     }
   }
 
+  //depositing money (INR) into the exchange so that user can use it
   onRamp(userId: string, amount: number) {
     const userBalance = this.balances.get(userId);
     if (!userBalance) {
