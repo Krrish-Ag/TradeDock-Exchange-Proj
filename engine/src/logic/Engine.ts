@@ -24,9 +24,16 @@ class Engine {
   private orderbooks: OrderBook[] = [];
   private balances: Map<String, UserBalance> = new Map();
 
+  //manages the snapshoit file
   constructor() {
-    let snapshot = fs.readFileSync("./snapshot.json");
+    let snapshot;
+    try {
+      snapshot = fs.readFileSync("./snapshot.json");
+    } catch (error) {
+      console.log("No snapshot found");
+    }
 
+    //if the file already exists, tat means my BE ran before, restore the previous state
     if (snapshot) {
       const snapshotFromFile = JSON.parse(snapshot.toString());
       this.orderbooks = snapshotFromFile.orderbooks.map(
@@ -41,13 +48,16 @@ class Engine {
       );
       this.balances = new Map(snapshotFromFile.balances);
     } else {
+      //otherwise start from the start
       this.orderbooks = [new OrderBook(`TATA`, [], [], 0, 0)];
       this.setBaseBalances();
     }
 
+    //saves the snapshot every 3 seconds to update it
     setInterval(this.saveSnapshot, 3 * 1000);
   }
 
+  //used to modify the snapshot file, keep updating it with the latest data
   saveSnapshot() {
     const snapshotToSave = {
       orderbooks: this.orderbooks.map((xx) => xx.getSnapShot()),
@@ -56,6 +66,7 @@ class Engine {
     fs.writeFileSync("./snapshot.json", JSON.stringify(snapshotToSave));
   }
 
+  //
   process({
     message,
     clientId,
