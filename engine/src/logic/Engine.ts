@@ -24,7 +24,29 @@ class Engine {
   private orderbooks: OrderBook[] = [];
   private balances: Map<String, UserBalance> = new Map();
 
-  constructor() {}
+  constructor() {
+    let snapshot = fs.readFileSync("./snapshot.json");
+
+    if (snapshot) {
+      const snapshotFromFile = JSON.parse(snapshot.toString());
+      this.orderbooks = snapshotFromFile.orderbooks.map(
+        (o: any) =>
+          new OrderBook(
+            o.baseAsset,
+            o.bids,
+            o.asks,
+            o.lastTradeId,
+            o.currentPrice
+          )
+      );
+      this.balances = new Map(snapshotFromFile.balances);
+    } else {
+      this.orderbooks = [new OrderBook(`TATA`, [], [], 0, 0)];
+      this.setBaseBalances();
+    }
+
+    setInterval(this.saveSnapshot, 3 * 1000);
+  }
 
   saveSnapshot() {
     const snapshotToSave = {
