@@ -13,6 +13,9 @@ Writing to a database is slow. Your engine needs to be fast. By just firing off 
 in the client-realtime, the marlet bar is gettign changed realtime with the help of websocket, the flow is likeThe MatketBar gets mounted on the screen, and du to useEffect, it sends message to the wsclient which puts it in buffered messages(concept imp if by then the ws connection is not yet done), with the SUBSCRIBE method and the right params(finally decided, that once the page mounts for a particuular symbol, subscribe to trades,book,ticker all three, as these apis, have subscribe/unsubscribe limit), and also we register with the 24hrTicker type with a callback which will set the NEW TICKER which gets refected on the frontend ui, and once we subscribe to the ticker of the right market, we get messages on ws with a specific format (found using binance docs), and with some array manipulatioon, matching the types, trigger the callback with the new ticker object(which we create using the data that we receive from the websocket which are the new prices)
 When the market bar gets unmounted, which will be when i chnage  the symbol, I unsubscribe all the 3 params
 
+MAKER: the guy who is already sitting on the orderbook
+TAKER: the guy who initiated the trade, the new person
+so in a buy order, the maker is the person who is selling, whereas in the sell order, the maker is the guy who is buying
 
 workflow:::
 1. Browser

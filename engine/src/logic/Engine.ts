@@ -221,7 +221,7 @@ class Engine {
     }
   }
 
-  //if need 
+  //if need
   addOrderBook(orderBook: OrderBook) {
     this.orderbooks.push(orderBook);
   }
@@ -233,6 +233,7 @@ class Engine {
     side: "buy" | "sell",
     userId: string
   ) {
+    //first find the right orderbook
     const orderBook = this.orderbooks.find((xx) => xx.ticker() === market);
     const baseAsset = market.split("_")[0];
     const quoteAsset = market.split("_")[1];
@@ -251,6 +252,7 @@ class Engine {
       side
     );
 
+    //create the order object
     const order: Order = {
       price: +price,
       quantity: +quantity,
@@ -262,9 +264,10 @@ class Engine {
         Math.random().toString(36).substring(2, 15),
     };
 
-    //adds order to the right orderbook
+    //adds order to the right orderbook, returns how much rder was filled and the fills which helped to complete that order
     const { fills, executedQty } = orderBook.addOrder(order);
 
+    //actually moves the money
     this.updateBalances(
       baseAsset,
       quoteAsset,
@@ -274,9 +277,12 @@ class Engine {
       side,
       fills
     );
-    this.createDbTrades(fills, market, userId);
+    //update db about trades and orders
+    this.createDbTrades(fills, market, userId, side);
     this.updateDbOrders(fills, order, executedQty, market);
-    this.publishWsTrades(market, userId, fills);
+
+    //inform the FrontEnd about everything going on
+    this.publishWsTrades(market, userId, fills, side);
     this.publishWsDepthUpdates(fills, price, side, market);
 
     return { executedQty, fills, orderId: order.orderId };
@@ -289,7 +295,7 @@ class Engine {
     executedQty: number,
     market: string
   ) {
-    //adding the requested order
+    //adding the requested order i.e. the taker's order
     RedisManager.getInstance().pushMessage({
       type: "ORDER_UPDATE",
       data: {
@@ -302,27 +308,32 @@ class Engine {
       },
     });
 
-    //adding the fills which tried to completed that order
+    //adding the fills which tried to completed that order,
     fills.forEach((fill) => {
       RedisManager.getInstance().pushMessage({
         type: "ORDER_UPDATE",
         data: {
-          orderId: fill.markerOrderId,
-          executedQty: fill.qty,
+          orderId: fill.markerOrderId, //this is the id of the maker
+          executedQty: fill.qty, //
         },
       });
     });
   }
 
-  //Send messages to queue to add the trade
-  createDbTrades(fills: Fill[], market: string, userId: string) {
+  //Send messages to queue to add the trade to the DB
+  createDbTrades(
+    fills: Fill[],
+    market: string,
+    userId: string,
+    side: "buy" | "sell"
+  ) {
     fills.forEach((fill) => {
       //each fill etting added as a sepasrate trade
       RedisManager.getInstance().pushMessage({
         type: "TRADE_ADDED",
         data: {
           id: fill.tradeId.toString(),
-          isBuyerMaker: fill.otherUserId === userId,
+          isBuyerMaker: side === "sell",
           price: fill.price,
           quantity: fill.qty.toString(),
           quoteQuantity: (fill.qty * Number(fill.price)).toString(),
@@ -334,7 +345,12 @@ class Engine {
   }
 
   //used to Publish real-time event data to a Redis for FRONTEND. these data keys, the way I used them in client, like how binance used to give
-  publishWsTrades(market: string, userId: string, fills: Fill[]) {
+  publishWsTrades(
+    market: string,
+    userId: string,
+    fills: Fill[],
+    side: "buy" | "sell"
+  ) {
     fills.forEach((fill) => {
       RedisManager.getInstance().publishMessage(
         `${market.toLowerCase()}@trade`,
@@ -342,7 +358,7 @@ class Engine {
           stream: `${market.toLowerCase()}@trade`,
           data: {
             t: fill.tradeId,
-            m: fill.otherUserId === userId, //have a litle doubt here
+            m: side === "sell", //isBuyerMkaer will be true if the guy who is buying was lready on thje orderbook, like the one DIDNOT initialize the trade
             p: fill.price,
             q: fill.qty.toString(),
             e: "trade",
@@ -352,6 +368,7 @@ class Engine {
     });
   }
 
+  //mainly used in order cancellation to inform the UI, like when user deleted his order, the depth from orderBook already has updated asks and bids, just update the FE using websockets, so only return the updated bids and asks FOR THAT PRICE
   sendUpdatedDepth(price: string, market: string) {
     const orderBook = this.orderbooks.find((xx) => xx.ticker() === market);
     if (!orderBook) {
@@ -387,12 +404,19 @@ class Engine {
       throw new Error("No such orderbook available");
     }
 
+    //gets the final state of the depth chart AFTER the trades.
     const depth = orderBook.getDepth();
+
     if (side === "buy") {
-      const updatedAsks = depth.asks.filter((x) =>
-        fills.forEach((fill) => fill.price === x[0])
-      );
+      //get the prices which are filling this buy order
+      const filledPrices = fills.map((fill) => fill.price);
+
+      //the asks which have been updated
+      const updatedAsks = depth.asks.filter((x) => filledPrices.includes(x[0]));
+
+      //if the og buy order is not yet completed, we need to tell the FE about it
       const updatedBid = depth.bids.find((x) => x[0] === price);
+
       console.log("publish ws depth updates");
       RedisManager.getInstance().publishMessage(
         `${market.toLowerCase()}@depth@100ms`,
@@ -406,10 +430,10 @@ class Engine {
         }
       );
     } else {
-      const updatedBids = depth.bids.filter((x) =>
-        fills.forEach((fill) => fill.price === x[0])
-      );
+      const filledPrices = fills.map((fill) => fill.price);
+      const updatedBids = depth.bids.filter((x) => filledPrices.includes(x[0]));
       const updatedAsk = depth.asks.find((x) => x[0] === price);
+
       console.log("publish ws depth updates");
       RedisManager.getInstance().publishMessage(
         `${market.toLowerCase()}@depth@100ms`,
@@ -426,6 +450,7 @@ class Engine {
   }
 
   //A "post-trade" function actually changing the money and assets between the buyer and the seller, finalizing the transaction.
+  //once verified, our money/asset is in locked, so when exchange happens, for the one who is giving, locjked value decreases, and available one increases
   updateBalances(
     baseAsset: string,
     quoteAsset: string,
@@ -439,23 +464,27 @@ class Engine {
       fills.forEach((fill) => {
         //upfating quote asset
 
+        //increase money for the seller
         //@ts-ignore
         this.balances.get(fill.otherUserId)[quoteAsset].available =
           (this.balances.get(fill.otherUserId)?.[quoteAsset]?.available || 0) +
           fill.qty * Number(fill.price);
 
+        //decrese balance of the user from locked who is buying that is userId
         //@ts-ignore
         this.balances.get(userId)[quoteAsset].locked =
-          (this.balances.get(userId)?.[baseAsset]?.locked || 0) -
+          (this.balances.get(userId)?.[quoteAsset]?.locked || 0) -
           fill.qty * Number(fill.price);
 
         //updating base assets
 
+        //decrese baseasset of the seller from locked
         //@ts-ignore
         this.balances.get(fill.otherUserId)[baseAsset].locked =
           (this.balances.get(fill.otherUserId)?.[baseAsset]?.locked || 0) -
           fill.qty;
 
+        //increase asset for userID
         //@ts-ignore
         this.balances.get(userId)[baseAsset].available =
           (this.balances.get(userId)?.[baseAsset]?.available || 0) + fill.qty;
@@ -466,24 +495,24 @@ class Engine {
 
         //@ts-ignore
         this.balances.get(fill.otherUserId)[quoteAsset].locked =
-          (this.balances.get(fill.otherUserId)?.[quoteAsset]?.locked || 0) +
+          (this.balances.get(fill.otherUserId)?.[quoteAsset]?.locked || 0) -
           fill.qty * Number(fill.price);
 
         //@ts-ignore
         this.balances.get(userId)[quoteAsset].available =
-          (this.balances.get(userId)?.[baseAsset]?.available || 0) -
+          (this.balances.get(userId)?.[quoteAsset]?.available || 0) +
           fill.qty * Number(fill.price);
 
         //updating base assets
 
         //@ts-ignore
         this.balances.get(fill.otherUserId)[baseAsset].available =
-          (this.balances.get(fill.otherUserId)?.[baseAsset]?.available || 0) -
+          (this.balances.get(fill.otherUserId)?.[baseAsset]?.available || 0) +
           fill.qty;
 
         //@ts-ignore
         this.balances.get(userId)[baseAsset].locked =
-          (this.balances.get(userId)?.[baseAsset]?.locked || 0) + fill.qty;
+          (this.balances.get(userId)?.[baseAsset]?.locked || 0) - fill.qty;
       });
     }
   }
@@ -498,12 +527,14 @@ class Engine {
     side: "buy" | "sell"
   ) {
     if (side === "buy") {
+      //for a buy order, the user must have the sufficient money in their avl balance
       if (
         (this.balances.get(userId)?.[quoteAsset]?.available || 0) <
         Number(price) * Number(quantity)
       )
         throw new Error("Insufficient quote currency");
 
+      //moving the money from avl to locked, so that dont use same omount on two assets
       //@ts-ignore
       this.balances.get(userId)[quoteAsset].available =
         (this.balances.get(userId)?.[quoteAsset]?.available || 0) -
@@ -514,12 +545,14 @@ class Engine {
         (this.balances.get(userId)?.[quoteAsset]?.locked || 0) +
         Number(price) * Number(quantity);
     } else {
+      //for a sell order, it checks if user has sufficient quanitity of base asset in avl
       if (
         (this.balances.get(userId)?.[baseAsset]?.available || 0) <
         Number(quantity)
       )
         throw new Error("Insufficient base asset");
 
+      //moving the asset from avl to locked
       //@ts-ignore
       this.balances.get(userId)[baseAsset].available =
         (this.balances.get(userId)?.[baseAsset]?.available || 0) -
