@@ -132,6 +132,8 @@ class Engine {
             //change the quote asset
             const leftQuantityPrice =
               (order.quantity - order.filled) * order.price;
+
+            //I am moving this amount from locked back to available
             //@ts-ignore
             this.balances.get(order.userId)[quoteAsset].available +=
               leftQuantityPrice;
@@ -139,13 +141,18 @@ class Engine {
             this.balances.get(order.userId)[quoteAsset].locked -=
               leftQuantityPrice;
 
+            //actually removces the order from the orderbook
             const price = cancelOrderbook?.cancelBid(order);
+            //this price is returned only if the cancellation was sucessful
             if (price) {
+              //to show the updated quantity on UI
               this.sendUpdatedDepth(price.toString(), cancelMarket);
             }
           } else {
             //only chnage the quantity as dealing with base asset
             const leftQuantityPrice = order.quantity - order.filled;
+
+            //I am moving this quantity from locked back to available
             //@ts-ignore
             this.balances.get(order.userId)[BASE_ASSET].available +=
               leftQuantityPrice;
