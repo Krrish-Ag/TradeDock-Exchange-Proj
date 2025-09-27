@@ -20,7 +20,7 @@ interface UserBalance {
 export const QUOTE_CURRENCY = "INR";
 const BASE_ASSET = "TATA";
 
-class Engine {
+export class Engine {
   private orderbooks: OrderBook[] = [];
   private balances: Map<String, UserBalance> = new Map();
 

@@ -136,7 +136,7 @@ export class OrderBook {
 
     for (let i = 0; i < this.bids.length; i++) {
       //to avoid self-transfers
-      if (this.asks[i].userId === order.userId) continue;
+      if (this.bids[i].userId === order.userId) continue;
 
       if (executedQty < order.quantity && order.price < this.bids[i].price) {
         const quantityTaken = Math.min(
