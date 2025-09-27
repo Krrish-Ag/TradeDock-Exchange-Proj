@@ -139,8 +139,7 @@ describe("Self trade prevention", () => {
 });
 
 describe("Decimal precision errors are taken care of", () => {
-  // This does succeed right now as well, but can be flaky based on how long the decimals are
-  it("Bid doesnt persist even with decimals", () => {
+  it("Bid gets eatun up persist even with decimal quantities", () => {
     const orderbook = new OrderBook(
       "TATA",
       [
