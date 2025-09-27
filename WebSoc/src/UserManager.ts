@@ -12,7 +12,7 @@ export class UserManager {
     return this.instance;
   }
 
-  private addUser(ws: WebSocket) {
+  public addUser(ws: WebSocket) {
     const id = this.getRandomId();
     const newUser = new User(id, ws);
     this.Users.set(id, newUser);

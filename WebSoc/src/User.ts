@@ -12,19 +12,19 @@ export class User {
     this.ws = ws;
   }
 
-  subscribe(sub: string) {
+  public subscribe(sub: string) {
     this.subscriptions.push(sub);
   }
 
-  unsubscribe(sub: string) {
+  public unsubscribe(sub: string) {
     this.subscriptions = this.subscriptions.filter((x) => x !== sub);
   }
 
-  emit(message: OutMessage) {
+  public emit(message: OutMessage) {
     this.ws.send(JSON.stringify(message));
   }
 
-  addListners() {
+  public addListners() {
     this.ws.on("message", (message: string) => {
       const msg: InMessage = JSON.parse(message);
       if (msg.type === "SUBSCRIBE") {
