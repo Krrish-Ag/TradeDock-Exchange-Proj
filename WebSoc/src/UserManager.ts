@@ -1,5 +1,6 @@
 import WebSocket from "ws";
 import { User } from "./User";
+import { SubscriptionManager } from "./SubscriptionMananger";
 
 export class UserManager {
   private static instance: UserManager;
@@ -24,6 +25,10 @@ export class UserManager {
       this.Users.delete(id);
       SubscriptionManager.getInstance().userLeft(id);
     });
+  }
+
+  public getUser(userId: string) {
+    return this.Users.get(userId);
   }
 
   private getRandomId() {
