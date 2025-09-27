@@ -137,3 +137,48 @@ describe("Self trade prevention", () => {
     expect(executedQty).toBe(0);
   });
 });
+
+describe("Decimal precision errors are taken care of", () => {
+  // This does succeed right now as well, but can be flaky based on how long the decimals are
+  it("Bid doesnt persist even with decimals", () => {
+    const orderbook = new OrderBook(
+      "TATA",
+      [
+        {
+          price: 999,
+          quantity: 0.551123,
+          orderId: "1",
+          filled: 0,
+          side: "buy" as "buy" | "sell",
+          userId: "1",
+        },
+      ],
+      [
+        {
+          price: 1001,
+          quantity: 0.551,
+          orderId: "2",
+          filled: 0,
+          side: "sell" as "buy" | "sell",
+          userId: "2",
+        },
+      ],
+      0,
+      0
+    );
+
+    const order = {
+      price: 999,
+      quantity: 0.551123,
+      orderId: "3",
+      filled: 0,
+      side: "sell" as "buy" | "sell",
+      userId: "3",
+    };
+
+    const { fills, executedQty } = orderbook.addOrder(order);
+    expect(fills.length).toBe(1);
+    expect(orderbook.bids.length).toBe(0);
+    expect(orderbook.asks.length).toBe(1);
+  });
+});
