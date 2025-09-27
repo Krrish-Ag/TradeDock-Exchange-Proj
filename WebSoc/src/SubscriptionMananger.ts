@@ -50,7 +50,29 @@ export class SubscriptionManager {
       );
   }
 
-  public unsubscribe(userId: string, sub: string) {}
+  public unsubscribe(userId: string, sub: string) {
+    const subscriptions = this.userToSubscriptions.get(userId);
+    if (subscriptions) {
+      this.userToSubscriptions.set(
+        userId,
+        subscriptions?.filter((s) => s !== sub)
+      );
+      if (this.userToSubscriptions.get(userId)?.length === 0)
+        this.userToSubscriptions.delete(userId);
+    }
+
+    const reverseSubscriptions = this.subscriptionToUsers.get(sub);
+    if (reverseSubscriptions) {
+      this.subscriptionToUsers.set(
+        sub,
+        reverseSubscriptions?.filter((u) => u !== userId)
+      );
+      if (this.subscriptionToUsers.get(sub)?.length === 0) {
+        this.subscriptionToUsers.delete(sub);
+        this.redisClient.unsubscribe(sub);
+      }
+    }
+  }
 
   public userLeft(userId: string) {
     this.userToSubscriptions
