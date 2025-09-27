@@ -38,6 +38,7 @@ export class SubscriptionManager {
     if (this.subscriptionToUsers.get(sub)?.length === 1) {
       this.redisClient.subscribe(sub, this.redisCallbackHandler);
     }
+    //here redisCallbackHandler wil pass the channel namei.e.message that is receivced as 1st argument and then sub/channel as 2nd, becoz thats how redis guys have written it
   }
 
   //and in this fn, ALL THE USERS who are connected to that chnanel will be receiving the updates from the emit method described in User
@@ -51,6 +52,7 @@ export class SubscriptionManager {
   }
 
   public unsubscribe(userId: string, sub: string) {
+    //removing from userToSubscriptions
     const subscriptions = this.userToSubscriptions.get(userId);
     if (subscriptions) {
       this.userToSubscriptions.set(
@@ -61,6 +63,7 @@ export class SubscriptionManager {
         this.userToSubscriptions.delete(userId);
     }
 
+    //removing from subscriptionToUsers
     const reverseSubscriptions = this.subscriptionToUsers.get(sub);
     if (reverseSubscriptions) {
       this.subscriptionToUsers.set(
@@ -69,7 +72,7 @@ export class SubscriptionManager {
       );
       if (this.subscriptionToUsers.get(sub)?.length === 0) {
         this.subscriptionToUsers.delete(sub);
-        this.redisClient.unsubscribe(sub);
+        this.redisClient.unsubscribe(sub); //the extra step here is that if now no user is connected to this sub/channel, then npo point in getting updates, so unsubcscribe
       }
     }
   }
