@@ -9,7 +9,7 @@ export type depthMessage = {
 };
 
 export type TikcerUpdateMessage = {
-  stream: string;
+  type: "depth";
   data: {
     h?: string;
     l?: string;
