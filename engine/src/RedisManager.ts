@@ -23,10 +23,15 @@ export class RedisManager {
   public pushMessage(message: DbMessage) {
     this.client.lPush("db process", JSON.stringify(message));
   }
+
+  //need to publish here, as it is pubsub
   public publishMessage(channel: string, message: WsMessage) {
-    this.client.lPush(channel, JSON.stringify(message));
+    this.client.publish(channel, JSON.stringify(message));
   }
+
+  //need to publish here, as it is pubsub
   public sendToApi(clientId: string, message: MessageToApi) {
-    this.client.lPush(clientId, JSON.stringify(message));
+    console.log(clientId, message);
+    this.client.publish(clientId, JSON.stringify(message));
   }
 }

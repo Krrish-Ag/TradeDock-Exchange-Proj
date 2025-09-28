@@ -7,11 +7,12 @@ async function main() {
   const engine = new Engine();
 
   while (true) {
-    const response = await redisClient.rPop("messages");
-    if (!response) {
-    } else {
+    const response = await redisClient.brPop("messages", 0);
+    console.log("RESPONSE", response);
+    if (response) {
       console.log("Motiv to do smth");
-      engine.process(JSON.parse(response));
+      engine.process(JSON.parse(response.element));
+    } else {
     }
   }
 }

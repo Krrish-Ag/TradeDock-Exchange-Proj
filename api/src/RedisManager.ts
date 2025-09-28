@@ -26,7 +26,8 @@ export class RedisManager {
         this.publisher.unsubscribe(id);
         resolve(JSON.parse(message));
       });
-      this.queue.lPush("messages", JSON.stringify({ cliendID: id, message }));
+      // console.log({ cliendID: id, message });
+      this.queue.lPush("messages", JSON.stringify({ clientId: id, message }));
     });
   }
 

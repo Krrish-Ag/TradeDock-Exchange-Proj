@@ -76,6 +76,7 @@ export class Engine {
     message: MessageFromApi;
     clientId: string;
   }) {
+    // console.log("===",clientId, message);
     switch (message.type) {
       case CREATE_ORDER:
         try {
@@ -95,6 +96,7 @@ export class Engine {
               orderId,
             },
           });
+          // console.log("IT came hereeee");
         } catch (error) {
           console.log("ERROR", error);
           RedisManager.getInstance().sendToApi(clientId, {
