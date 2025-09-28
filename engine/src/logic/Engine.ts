@@ -54,7 +54,9 @@ export class Engine {
     }
 
     //saves the snapshot every 3 seconds to update it
-    setInterval(this.saveSnapshot, 3 * 1000);
+    setInterval(() => {
+      this.saveSnapshot();
+    }, 3 * 1000);
   }
 
   //used to modify the snapshot file, keep updating it with the latest data

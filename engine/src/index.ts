@@ -1,12 +1,13 @@
 import { createClient } from "redis";
+import { Engine } from "./logic/Engine";
 
-function main() {
+async function main() {
   const redisClient = createClient();
   redisClient.connect();
   const engine = new Engine();
 
   while (true) {
-    const response = redisClient.brPop("messages", 0);
+    const response = await redisClient.rPop("messages");
     if (!response) {
     } else {
       console.log("Motiv to do smth");

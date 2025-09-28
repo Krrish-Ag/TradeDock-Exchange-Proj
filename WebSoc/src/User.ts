@@ -1,6 +1,7 @@
 import WebSocket from "ws";
 import { OutMessage } from "./types/out";
 import { InMessage, UNSUBSCRIBE } from "./types/in";
+import { SubscriptionManager } from "./SubscriptionMananger";
 
 export class User {
   private id: string;
@@ -35,7 +36,7 @@ export class User {
 
       if (msg.type === UNSUBSCRIBE) {
         msg.params.forEach((s) =>
-          SubscriptionManager.getInstance().unsubscribe(this.id, msg.params[0])
+          SubscriptionManager.getInstance().unsubscribe(this.id, s)
         );
       }
     });
