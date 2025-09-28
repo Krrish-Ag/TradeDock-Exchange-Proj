@@ -7,7 +7,7 @@ const MARKET = "TATA_INR";
 const USER_ID = "5";
 
 async function main() {
-  const price = 1000 + Math.random() * 10;
+  const price = 100 + Math.random() * 10;
   const openOrders: any = await axios.get(
     `${BASE_URL}/api/v1/order/open?userId=${USER_ID}&market=${MARKET}`
   );

@@ -190,7 +190,6 @@ export class Engine {
           if (!openOrderBook) throw new Error("No orderbook/market like that");
 
           const openOrders = openOrderBook.getOpenOrders(clientId);
-
           RedisManager.getInstance().sendToApi(clientId, {
             type: "OPEN_ORDERS",
             payload: openOrders,

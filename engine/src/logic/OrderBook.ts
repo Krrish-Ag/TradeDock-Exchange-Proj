@@ -201,9 +201,11 @@ export class OrderBook {
     for (const price in asksDep) {
       asks.push([price, asksDep[price].toString()]);
     }
-    console.log(this.bids, this.asks);
-    console.log(bids, asks);
-    console.log("=====");
+
+    // console.log(this.bids, this.asks);
+    // console.log(bids, asks);
+    // console.log("=====");
+
     return { bids, asks };
   }
 

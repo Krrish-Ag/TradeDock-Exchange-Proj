@@ -35,12 +35,13 @@ orderRouter.delete("/", async (req, res) => {
 });
 
 orderRouter.get("/open", async (req, res) => {
-  const { userId, market } = req.body;
+  const { userId, market } = req.query;
+  console.log(userId, market);
   const response = await RedisManager.getInstance().sendAndAwait({
     type: GET_OPEN_ORDERS,
     data: {
-      market,
-      userId,
+      market: market as string,
+      userId: userId as string,
     },
   });
   res.json(response.payload);
