@@ -8,6 +8,7 @@ export const BidTable = ({ bids }: { bids: [string, string][] }) => {
   const bidsWithTotal: [string, string, number][] = currBids.map(
     ([price, quantity]) => [price, quantity, (currentTotal += Number(quantity))]
   );
+  // console.log(bidsWithTotal);
   const maxTotal = currBids.reduce(
     (acc, [_, quantity]) => acc + Number(quantity),
     0
@@ -19,7 +20,7 @@ export const BidTable = ({ bids }: { bids: [string, string][] }) => {
         <Bid
           maxTotal={maxTotal}
           total={total}
-          key={price}
+          key={Math.random()}
           price={price}
           quantity={quantity}
         />

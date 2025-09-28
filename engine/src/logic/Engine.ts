@@ -82,8 +82,8 @@ export class Engine {
         try {
           const { executedQty, fills, orderId } = this.createOrder(
             message.data.market,
-            message.data.price,
             message.data.quantity,
+            message.data.price,
             message.data.side,
             message.data.userId
           );

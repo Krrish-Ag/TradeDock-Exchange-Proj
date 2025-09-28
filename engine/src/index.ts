@@ -8,7 +8,7 @@ async function main() {
 
   while (true) {
     const response = await redisClient.brPop("messages", 0);
-    console.log("RESPONSE", response);
+    // console.log("RESPONSE", response);
     if (response) {
       console.log("Motiv to do smth");
       engine.process(JSON.parse(response.element));

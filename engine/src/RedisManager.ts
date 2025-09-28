@@ -31,7 +31,6 @@ export class RedisManager {
 
   //need to publish here, as it is pubsub
   public sendToApi(clientId: string, message: MessageToApi) {
-    console.log(clientId, message);
     this.client.publish(clientId, JSON.stringify(message));
   }
 }

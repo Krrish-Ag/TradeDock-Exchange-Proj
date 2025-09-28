@@ -2,7 +2,7 @@
 export const AskTable = ({ asks }: { asks: [string, string][] }) => {
   let currentTotal = 0;
   asks.sort();
-
+  // console.log("ASKS", asks);
   const relevantAsks = asks.slice(0, 15);
 
   relevantAsks.reverse();
@@ -24,7 +24,7 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
       {asksWithTotal.map(([price, quantity, total]) => (
         <Ask
           maxTotal={maxTotal}
-          key={price}
+          key={Math.random()}
           price={price}
           quantity={quantity}
           total={total}

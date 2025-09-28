@@ -56,7 +56,6 @@ export class OrderBook {
 
   addOrder(order: Order) {
     //updating the filled property of the order and then pushing it into the in memory asks or bids only if order not fulfilled with current orderbook
-
     if (order.side === "buy") {
       const { executedQty, fills } = this.matchBid(order);
       order.filled = executedQty;
@@ -198,9 +197,9 @@ export class OrderBook {
       bids.push([price, bidsDep[price].toString()]);
     }
     for (const price in asksDep) {
-      bids.push([price, asksDep[price].toString()]);
+      asks.push([price, asksDep[price].toString()]);
     }
-
+    // console.log(bids, asks);
     return { bids, asks };
   }
 

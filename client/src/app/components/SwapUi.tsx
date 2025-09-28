@@ -3,11 +3,9 @@ import Image from "next/image";
 import { useState } from "react";
 
 export function SwapUI({
-  market,
-  marketWithUnderScore,
+  market
 }: {
   market: string;
-  marketWithUnderScore: string;
 }) {
   const [amount, setAmount] = useState("");
   const [activeTab, setActiveTab] = useState("buy");
@@ -56,7 +54,7 @@ export function SwapUI({
                       <img
                         alt="Symbol 1"
                         src={`https://backpack.exchange/coins/${
-                          marketWithUnderScore.toLowerCase().split("_")[0]
+                          market.toLowerCase().split("_")[0]
                         }.svg`}
                         className="w-6 h-6"
                       />
@@ -82,7 +80,7 @@ export function SwapUI({
                     <img
                       alt="Symbol 2"
                       src={`https://backpack.exchange/coins/${
-                        marketWithUnderScore.toLowerCase().split("_")[1]
+                        market.toLowerCase().split("_")[1]
                       }.svg`}
                       className="w-6 h-6"
                     />

@@ -12,5 +12,6 @@ depthRouter.get("/", async (req, res) => {
       market: symbol as string,
     },
   });
+  console.log(response);
   res.json(response.payload);
 });

@@ -11,17 +11,17 @@ export default function Page() {
   const { market }: { market: string } = useParams();
 
   //to replace the _, as binance needs no _, but I need that for images
-  const marketName = market.replace("_", "") || "";
+  // const marketName = market.replace("_", "") || "";
 
   const [activeTab, setActiveTab] = useState<string>("Book");
 
   return (
     <div className="flex flex-row flex-1">
       <div className="flex flex-col flex-1">
-        <MarketBar market={marketName} marketWithUnderScore={market} />
+        <MarketBar market={market} />
         <div className="flex h-[620px] border-y border-slate-800">
           <div className="flex flex-col flex-1">
-            <TradeView market={marketName} />
+            <TradeView market={market} />
           </div>
           <div className="w-[1px] flex-col border-slate-800 border-l"></div>
           <div className="p-2 flex flex-col gap-2 w-[250px] overflow-hidden">
@@ -44,9 +44,9 @@ export default function Page() {
               </div>
             </div>
             {activeTab === "Book" ? (
-              <Depth market={marketName} />
+              <Depth market={market} />
             ) : (
-              <Trades market={marketName} />
+              <Trades market={market} />
             )}
           </div>
         </div>
@@ -54,7 +54,7 @@ export default function Page() {
       <div className="w-[1px] flex-col border-slate-800 border-l"></div>
       <div>
         <div className="flex flex-col w-[250px]">
-          <SwapUI market={marketName} marketWithUnderScore={market} />
+          <SwapUI market={market} />
         </div>
       </div>
     </div>
