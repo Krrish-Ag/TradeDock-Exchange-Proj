@@ -99,7 +99,7 @@ export class OrderBook {
 
         const quantityGiven = Math.min(
           order.quantity - executedQty,
-          this.asks[i].quantity
+          this.asks[i].quantity - this.asks[i].filled
         );
         executedQty += quantityGiven;
         this.asks[i].filled += quantityGiven;
@@ -140,7 +140,7 @@ export class OrderBook {
       if (executedQty < order.quantity && order.price <= this.bids[i].price) {
         const quantityTaken = Math.min(
           order.quantity - executedQty,
-          this.bids[i].quantity
+          this.bids[i].quantity - this.bids[i].filled
         );
         executedQty += quantityTaken;
         this.bids[i].filled += quantityTaken;
@@ -201,7 +201,9 @@ export class OrderBook {
     for (const price in asksDep) {
       asks.push([price, asksDep[price].toString()]);
     }
-    // console.log(bids, asks);
+    console.log(this.bids, this.asks);
+    console.log(bids, asks);
+    console.log("=====");
     return { bids, asks };
   }
 

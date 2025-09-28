@@ -419,6 +419,7 @@ export class Engine {
     const depth = orderBook.getDepth();
 
     if (side === "buy") {
+      console.log(depth);
       //get the prices which are filling this buy order
       const filledPrices = fills.map((fill) => fill.price);
 
@@ -434,8 +435,8 @@ export class Engine {
         {
           stream: `${market.toLowerCase()}@depth@100ms`,
           data: {
-            a: updatedAsks,
-            b: updatedBid ? [updatedBid] : [],
+            a: depth.asks,
+            b: depth.bids,
             e: "depthUpdate",
           },
         }
@@ -451,8 +452,8 @@ export class Engine {
         {
           stream: `${market.toLowerCase()}@depth@100ms`,
           data: {
-            a: updatedAsk ? [updatedAsk] : [],
-            b: updatedBids,
+            a: depth.asks,
+            b: depth.bids,
             e: "depthUpdate",
           },
         }

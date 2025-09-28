@@ -1,11 +1,9 @@
 //asks: [price,size][]
 export const AskTable = ({ asks }: { asks: [string, string][] }) => {
   let currentTotal = 0;
-  asks.sort();
-  // console.log("ASKS", asks);
-  const relevantAsks = asks.slice(0, 15);
+  asks.sort((a, b) => b[0] - a[0]);
 
-  relevantAsks.reverse();
+  const relevantAsks = asks.slice(0, 15);
 
   const asksWithTotal: [string, string, number][] = [];
   for (let i = relevantAsks.length - 1; i >= 0; i--) {
