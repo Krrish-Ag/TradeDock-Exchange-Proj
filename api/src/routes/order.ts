@@ -6,6 +6,9 @@ export const orderRouter = express.Router();
 
 orderRouter.post("/", async (req, res) => {
   const { market, price, quantity, side, userId } = req.body;
+  if (price <= 0) {
+    return res.json({ message: "The price must be a positive number" });
+  }
   const response = await RedisManager.getInstance().sendAndAwait({
     type: CREATE_ORDER,
     data: {
