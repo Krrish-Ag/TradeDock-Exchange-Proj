@@ -2,12 +2,12 @@ export const SUBSCRIBE = "SUBSCRIBE";
 export const UNSUBSCRIBE = "UNSUBSCRIBE";
 
 export type SubscribeMessage = {
-  type: typeof SUBSCRIBE;
+  method: typeof SUBSCRIBE;
   params: [];
 };
 
 export type UnsubscribeMessage = {
-  type: typeof UNSUBSCRIBE;
+  method: typeof UNSUBSCRIBE;
   params: [];
 };
 

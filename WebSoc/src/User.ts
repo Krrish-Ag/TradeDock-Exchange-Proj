@@ -11,6 +11,7 @@ export class User {
   constructor(id: string, ws: WebSocket) {
     this.id = id;
     this.ws = ws;
+    this.addListners();
   }
 
   public subscribe(sub: string) {
@@ -28,13 +29,14 @@ export class User {
   public addListners() {
     this.ws.on("message", (message: string) => {
       const msg: InMessage = JSON.parse(message);
-      if (msg.type === "SUBSCRIBE") {
+      // console.log("MSGG RECEIVED", msg);
+      if (msg.method === "SUBSCRIBE") {
         msg.params.forEach((s) =>
           SubscriptionManager.getInstance().subscribe(this.id, s)
         );
       }
 
-      if (msg.type === UNSUBSCRIBE) {
+      if (msg.method === "UNSUBSCRIBE") {
         msg.params.forEach((s) =>
           SubscriptionManager.getInstance().unsubscribe(this.id, s)
         );

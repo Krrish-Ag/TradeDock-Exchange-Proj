@@ -36,7 +36,10 @@ export class SubscriptionManager {
 
     //if a sub has been connected for the first time, need to CONNECT TO REDIS so that for any upcomibng msgs coming to this channel, we receive them
     if (this.subscriptionToUsers.get(sub)?.length === 1) {
-      this.redisClient.subscribe(sub, this.redisCallbackHandler);
+      // console.log("subscribing", sub);
+      this.redisClient.subscribe(sub, (message, channel) => {
+        this.redisCallbackHandler(message, channel);
+      });
     }
     //here redisCallbackHandler wil pass the channel namei.e.message that is receivced as 1st argument and then sub/channel as 2nd, becoz thats how redis guys have written it
   }
@@ -47,7 +50,7 @@ export class SubscriptionManager {
     this.subscriptionToUsers
       .get(channel)
       ?.forEach((user) =>
-        UserManager.getInstance().getUser(user)?.emit(parsedMessage)
+        UserManager.getInstance().getUser(user)?.emit(parsedMessage.data)
       );
   }
 
