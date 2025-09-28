@@ -93,7 +93,7 @@ export class OrderBook {
     let executedQty = 0;
 
     for (let i = 0; i < this.asks.length; i++) {
-      if (executedQty < order.quantity && order.price <= this.asks[i].price) {
+      if (executedQty < order.quantity && order.price >= this.asks[i].price) {
         //to avoid self-transfers
         if (this.asks[i].userId === order.userId) continue;
 
@@ -182,7 +182,8 @@ export class OrderBook {
       if (!bidsDep[this.bids[i].price]) {
         bidsDep[this.bids[i].price] = 0;
       }
-      bidsDep[this.bids[i].price] += this.bids[i].quantity;
+      bidsDep[this.bids[i].price] +=
+        this.bids[i].quantity - this.bids[i].filled; //need to subtract the filled, as only show the quantity on FE which is still available
     }
 
     //to accumulate same price orders
@@ -190,7 +191,8 @@ export class OrderBook {
       if (!asksDep[this.asks[i].price]) {
         asksDep[this.asks[i].price] = 0;
       }
-      asksDep[this.asks[i].price] += this.asks[i].quantity;
+      asksDep[this.asks[i].price] +=
+        this.asks[i].quantity - this.asks[i].filled; //need to subtract the filled, as only show the quantity on FE which is still available
     }
 
     for (const price in bidsDep) {
