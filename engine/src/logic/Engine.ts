@@ -96,7 +96,7 @@ export class Engine {
               orderId,
             },
           });
-          // console.log("IT came hereeee");
+          console.log("IT came hereeee");
         } catch (error) {
           console.log("ERROR", error);
           RedisManager.getInstance().sendToApi(clientId, {
@@ -367,10 +367,11 @@ export class Engine {
         {
           stream: `${market.toLowerCase()}@trade`,
           data: {
-            t: fill.tradeId,
-            m: side === "sell", //isBuyerMkaer will be true if the guy who is buying was lready on thje orderbook, like the one DIDNOT initialize the trade
-            p: fill.price,
-            q: fill.qty.toString(),
+            tradeId: fill.tradeId,
+            isBuyerMaker: side === "sell", //isBuyerMkaer will be true if the guy who is buying was lready on thje orderbook, like the one DIDNOT initialize the trade
+            price: fill.price,
+            qty: fill.qty.toString(),
+            time: Date.now(),
             e: "trade",
           },
         }

@@ -27,10 +27,11 @@ export type DepthUpdateType = {
 export type TradeAddedType = {
   stream: string;
   data: {
-    t?: number;
-    m?: boolean;
-    p?: string;
-    q?: string;
+    tradeId?: number;
+    isBuyerMaker?: boolean;
+    price?: string;
+    qty?: string;
+    time: number;
     e: "trade";
   };
 };

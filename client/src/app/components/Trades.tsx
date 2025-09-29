@@ -11,7 +11,7 @@ export function Trades({ market }: { market: string }) {
 
   useEffect(() => {
     getTrades(market).then((d) => {
-      setTrades(d);
+      setTrades(d.reverse());
     });
 
     //for the latest price in trades
@@ -21,12 +21,11 @@ export function Trades({ market }: { market: string }) {
         setTrades((prev) => {
           if (prev.length > 0 && prev[0].id === data.id) return prev;
           const newTrades = [...prev];
-          console.log(data);
           newTrades?.unshift({
             id: data.id ?? "",
             isBuyerMaker: data.isBuyerMaker ?? "",
             price: data.price ?? "",
-            qty: data.qty ?? "",
+            volume: data.volume ?? "",
             time: data.time ?? "",
           });
           // newTrades.slice(0, 20);

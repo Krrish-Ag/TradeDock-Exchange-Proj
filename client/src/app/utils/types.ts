@@ -16,7 +16,7 @@ export interface Trade {
   id: number;
   isBuyerMaker: boolean;
   price: string;
-  qty: string;
+  volume: string;
   time: number;
 }
 

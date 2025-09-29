@@ -17,7 +17,7 @@ async function initializeDB() {
             time            TIMESTAMP WITH TIME ZONE NOT NULL,
             price   DOUBLE PRECISION,
             volume      DOUBLE PRECISION,
-            currency_code   VARCHAR (10)
+            market   VARCHAR (10)
         );
         
         SELECT create_hypertable('tata_prices', 'time', 'price', 2);
@@ -32,9 +32,9 @@ async function initializeDB() {
             min(price) AS low,
             last(price, time) AS close,
             sum(volume) AS volume,
-            currency_code
+            market
         FROM tata_prices
-        GROUP BY bucket, currency_code;
+        GROUP BY bucket, market;
     `);
 
   await client.query(`
@@ -46,9 +46,9 @@ async function initializeDB() {
             min(price) AS low,
             last(price, time) AS close,
             sum(volume) AS volume,
-            currency_code
+            market
         FROM tata_prices
-        GROUP BY bucket, currency_code;
+        GROUP BY bucket, market;
     `);
 
   await client.query(`
@@ -60,9 +60,9 @@ async function initializeDB() {
             min(price) AS low,
             last(price, time) AS close,
             sum(volume) AS volume,
-            currency_code
+            market
         FROM tata_prices
-        GROUP BY bucket, currency_code;
+        GROUP BY bucket, market;
     `);
 
   await client.end();

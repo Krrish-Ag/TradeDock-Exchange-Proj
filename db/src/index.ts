@@ -25,12 +25,12 @@ async function main() {
         console.log("adding data");
         const price = message.data.price;
         const volume = message.data.quantity;
-        const currency = message.data.market.split("_")[1];
+        const market = message.data.market;
         const timestamp = new Date(message.data.timestamp);
         const query =
-          "INSERT INTO tata_prices (time, price, volume, currency_code) VALUES ($1, $2, $3, $4)";
+          "INSERT INTO tata_prices (time, price, volume, market) VALUES ($1, $2, $3, $4)";
         // TODO: How to add volume?
-        const values = [timestamp, price, volume, currency];
+        const values = [timestamp, price, volume, market];
         await pgClient.query(query, values);
       }
     }

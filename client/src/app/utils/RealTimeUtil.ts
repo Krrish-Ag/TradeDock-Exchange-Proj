@@ -66,13 +66,14 @@ export class WSClient {
             xx.callback(newDepth);
           });
         } else if (type === "trade") {
+          console.log(message);
           this.callbacks[type].forEach((xx) => {
             const newTrade: Trade = {
-              id: message.t,
-              isBuyerMaker: message.m,
-              price: message.p,
-              qty: message.q,
-              time: message.E,
+              id: message.tradeId,
+              isBuyerMaker: message.isBuyerMaker,
+              price: message.price,
+              volume: message.qty,
+              time: message.time,
             };
             console.log(newTrade);
 
