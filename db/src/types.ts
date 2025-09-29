@@ -1,7 +1,7 @@
 const TRADE_ADDED = "TRADE_ADDED";
 const ORDER_UPDATE = "ORDER_UPDATE";
 
-export type InMessage =
+export type DbMessage =
   | {
       type: typeof TRADE_ADDED;
       data: {
