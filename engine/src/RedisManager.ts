@@ -21,7 +21,7 @@ export class RedisManager {
   }
 
   public pushMessage(message: DbMessage) {
-    this.client.lPush("db process", JSON.stringify(message));
+    this.client.lPush("db_process", JSON.stringify(message));
   }
 
   //need to publish here, as it is pubsub

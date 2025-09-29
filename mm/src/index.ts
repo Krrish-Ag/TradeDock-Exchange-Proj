@@ -4,7 +4,7 @@ const BASE_URL = "http://localhost:3000";
 const TOTAL_BIDS = 15;
 const TOTAL_ASK = 15;
 const MARKET = "TATA_INR";
-const USER_ID = "5";
+const USER_ID = "5"; //hardcoded the 5th user to be
 
 async function main() {
   const price = 100 + Math.random() * 10;

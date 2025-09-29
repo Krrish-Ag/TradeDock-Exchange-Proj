@@ -10,7 +10,7 @@ export const MarketBar = ({ market }: { market: string }) => {
 
   //this is so that when we mount the Marketbar, we register for the event ticker which then runs the cllback fn which actually expects data Ticker and then updat teh ticker for Marketbar using setTicker
   useEffect(() => {
-    getTicker(market).then(setTicker);
+    // getTicker(market).then(setTicker);
 
     WSClient.getInstance().registerCallBack(
       "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get

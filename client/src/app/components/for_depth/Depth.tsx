@@ -18,7 +18,7 @@ export function Depth({ market }: { market: string }) {
       setAsks(d.asks);
     });
 
-    getTicker(market).then((t) => setPrice(t.lastPrice));
+    // getTicker(market).then((t) => setPrice(t.lastPrice));
 
     WSClient.getInstance().registerCallBack(
       "depthUpdate",
