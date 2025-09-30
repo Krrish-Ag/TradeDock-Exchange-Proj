@@ -1,25 +1,17 @@
 export type depthMessage = {
-  type: "ticker";
+  type: "depth";
   data: {
     a?: [string, string][];
     b?: [string, string][];
     id: number;
-    e: "24hrTicker";
+    e: "depthUpdate";
   };
 };
 
 export type TikcerUpdateMessage = {
   type: "depth";
   data: {
-    h?: string;
-    l?: string;
-    v?: string;
-    s?: string;
-    c?: string;
-    q?: string;
-    p?: string;
-    P?: string;
-    id: number;
+    lastPrice?: string;
     e: "24hrTicker";
   };
 };

@@ -37,19 +37,14 @@ export class WSClient {
     this.ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       const type = message.e;
+      console.log(type);
       if (this.callbacks[type]) {
         // console.log("IN there");
         if (type === "24hrTicker") {
+          console.log("YOOOOO", message);
           this.callbacks[type].forEach((xx) => {
             const newTicker: Partial<Ticker> = {
-              highPrice: message.h,
-              lowPrice: message.l,
-              volume: message.v,
-              symbol: message.s,
-              lastPrice: message.c,
-              quoteVolume: message.q,
-              priceChange: message.p,
-              priceChangePercent: message.P,
+              lastPrice: message.lastPrice,
             };
 
             xx.callback(newTicker);

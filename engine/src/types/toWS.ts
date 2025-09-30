@@ -3,14 +3,7 @@
 export type TikcerUpdateType = {
   stream: string;
   data: {
-    h?: string;
-    l?: string;
-    v?: string;
-    s?: string;
-    c?: string;
-    q?: string;
-    p?: string;
-    P?: string;
+    lastPrice: string;
     e: "24hrTicker";
   };
 };

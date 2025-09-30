@@ -14,9 +14,9 @@ export const tickerRouter = Router();
 
 tickerRouter.get("/", async (req, res) => {
   const { symbol } = req.query;
+  //getting from db
   const query = "SELECT * FROM tata_prices WHERE TRIM(market)=$1";
   const response = await pgClient.query(query, [symbol]);
   const lastRow = response.rows[response.rows.length - 1];
-  //getting from db
   res.json({ lastPrice: lastRow.price });
 });

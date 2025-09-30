@@ -294,6 +294,8 @@ export class Engine {
     //inform the FrontEnd about everything going on
     this.publishWsTrades(market, userId, fills, side);
     this.publishWsDepthUpdates(fills, price, side, market);
+    this.publishWsTicker(market, fills);
+    console.log("published ws ticker");
 
     return { executedQty, fills, orderId: order.orderId };
   }
@@ -373,6 +375,21 @@ export class Engine {
             qty: fill.qty.toString(),
             time: Date.now(),
             e: "trade",
+          },
+        }
+      );
+    });
+  }
+
+  publishWsTicker(market: string, fills: Fill[]) {
+    fills.forEach((fill) => {
+      RedisManager.getInstance().publishMessage(
+        `${market.toLowerCase()}@ticker`,
+        {
+          stream: `${market.toLowerCase()}@ticker`,
+          data: {
+            lastPrice: fill.price,
+            e: "24hrTicker",
           },
         }
       );
