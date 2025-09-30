@@ -25,10 +25,13 @@ export async function getKlines(
   endTime: number
 ): Promise<KLine[]> {
   const response = await axios.get(
-    `${BASE_URL}/klines?symbol=${market}&interval=${interval}`
+    `${BASE_URL}/klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
   );
+  console.log("response for klines", response);
   const data: KLine[] = response.data;
-  return data.sort((x, y) => Number(x.end) - Number(y.end));
+  console.log("data from klines router", data);
+  return data;
+  // return data.sort((x, y) => Number(x[0]) - Number(y[0]));
 }
 
 // export async function getMarkets(): Promise<string[]> {

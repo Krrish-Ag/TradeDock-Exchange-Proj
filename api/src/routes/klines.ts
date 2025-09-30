@@ -10,20 +10,23 @@ const pgClient = new Client({
 });
 pgClient.connect();
 
-const kLinesRouter = express.Router();
+export const kLinesRouter = express.Router();
 
 kLinesRouter.get("/", async (req, res) => {
   const { market, interval, startTime, endTime } = req.query;
   let query;
   switch (interval) {
     case "1m":
-      query = "SELECT * FROM klines_1m WHERE bucket>=$1 AND bucket<=$2";
+      query =
+        "SELECT * FROM klines_1m WHERE start_time>=$1 AND start_time<=$2";
       break;
-    case "1d":
-      query = "SELECT * FROM klines_1d WHERE bucket>=$1 AND bucket<=$2";
+    case "1h":
+      query =
+        "SELECT * FROM klines_1h WHERE start_time>=$1 AND start_time<=$2";
       break;
     case "1w":
-      query = "SELECT * FROM klines_1w WHERE bucket>=$1 AND bucket<=$2";
+      query =
+        "SELECT * FROM klines_1w WHERE start_time>=$1 AND start_time<=$2";
       break;
     default:
       res.status(400).json("Invalid Interval");
@@ -33,20 +36,30 @@ kLinesRouter.get("/", async (req, res) => {
     //@ts-ignore
     const result = await pgClient.query(query, [
       new Date(Number(startTime) * 1000),
-      new Date(Number(endTime) * 1000),
+      new Date(Number(endTime) * 1000)
     ]);
+    console.log("RES FROM KLINES_TABLE", result.rows);
+    // res.json(
+    //   (result.rows as any[]).map((x: any) => ({
+    //     close: x.close,
+    //     end: x.bucket,
+    //     high: x.high,
+    //     low: x.low,
+    //     open: x.open,
+    //     quoteVolume: x.quoteVolume,
+    //     start: x.start,
+    //     trades: x.trades,
+    //     volume: x.volume,
+    //   }))
+    // );
     res.json(
-      (result.rows as any[]).map((x: any) => ({
-        close: x.close,
-        end: x.bucket,
-        high: x.high,
-        low: x.low,
-        open: x.open,
-        quoteVolume: x.quoteVolume,
-        start: x.start,
-        trades: x.trades,
-        volume: x.volume,
-      }))
+      (result.rows as any[]).map((x: any) => [
+        x.start_time,
+        x.open,
+        x.high,
+        x.low,
+        x.close,
+      ])
     );
   } catch (error) {
     console.log(error);

@@ -12,12 +12,12 @@ export function TradeView({ market }: { market: string }) {
     try {
       klineData = await getKlines(
         market,
-        "1h",
-        Math.floor((new Date().getTime() - 1000 * 60 * 60 * 24 * 7) / 1000),
+        "1m",
+        Math.floor((new Date().getTime() - 1000 * 60 * 60 * 24 * 30) / 1000),
         Math.floor(new Date().getTime() / 1000)
       );
     } catch (e) {
-      console.log("ERROR", e);
+      console.log("ERROR in KlINES", e);
     }
 
     if (chartRef) {
@@ -28,11 +28,11 @@ export function TradeView({ market }: { market: string }) {
         chartRef.current,
         [
           ...klineData?.map((x) => ({
-            close: +x[4], //got to know these indices from binance docs: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data
-            high: +x[2],
-            low: +x[3],
-            open: +x[1],
-            timestamp: x[0],
+            close: +x[4], //close or latest price //got to know these indices from binance docs: https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Kline-Candlestick-Data
+            high: +x[2], //highest price touched
+            low: +x[3], //lowest price touched
+            open: +x[1], //open price
+            timestamp: new Date(x[0]), //open time
           })),
         ].sort((x, y) => (x.timestamp < y.timestamp ? -1 : 1)) || [],
         {

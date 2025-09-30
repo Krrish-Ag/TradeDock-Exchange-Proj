@@ -26,7 +26,7 @@ async function initializeDB() {
   await client.query(`
         CREATE MATERIALIZED VIEW IF NOT EXISTS klines_1m AS
         SELECT
-            time_bucket('1 minute', time) AS bucket,
+            time_bucket('1 minute', time) AS start_time,
             first(price, time) AS open,
             max(price) AS high,
             min(price) AS low,
@@ -34,13 +34,13 @@ async function initializeDB() {
             sum(volume) AS volume,
             market
         FROM tata_prices
-        GROUP BY bucket, market;
+        GROUP BY start_time, market;
     `);
 
   await client.query(`
         CREATE MATERIALIZED VIEW IF NOT EXISTS klines_1h AS
         SELECT
-            time_bucket('1 hour', time) AS bucket,
+            time_bucket('1 hour', time) AS start_time,
             first(price, time) AS open,
             max(price) AS high,
             min(price) AS low,
@@ -48,13 +48,13 @@ async function initializeDB() {
             sum(volume) AS volume,
             market
         FROM tata_prices
-        GROUP BY bucket, market;
+        GROUP BY start_time, market;
     `);
 
   await client.query(`
         CREATE MATERIALIZED VIEW IF NOT EXISTS klines_1w AS
         SELECT
-            time_bucket('1 week', time) AS bucket,
+            time_bucket('1 week', time) AS start_time,
             first(price, time) AS open,
             max(price) AS high,
             min(price) AS low,
@@ -62,7 +62,7 @@ async function initializeDB() {
             sum(volume) AS volume,
             market
         FROM tata_prices
-        GROUP BY bucket, market;
+        GROUP BY start_time, market;
     `);
 
   await client.end();
