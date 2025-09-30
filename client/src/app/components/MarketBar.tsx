@@ -63,10 +63,14 @@ export const MarketBar = ({ market }: { market: string }) => {
               <p
                 className={`font-medium tabular-nums text-greenText text-md text-green-500`}
               >
-                ${Number(ticker?.lastPrice).toFixed(2)}
+                {isNaN(Number(ticker?.lastPrice))
+                  ? "No Trade Yet"
+                  : `₹${Number(ticker?.lastPrice).toFixed(2)}`}
               </p>
               <p className="font-medium text-lg tabular-nums">
-                ${Number(ticker?.lastPrice).toFixed(2)}
+                {isNaN(Number(ticker?.lastPrice))
+                  ? "No Trade Yet"
+                  : `₹${Number(ticker?.lastPrice).toFixed(2)}`}
               </p>
             </div>
           </div>
