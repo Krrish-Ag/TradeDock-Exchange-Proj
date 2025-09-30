@@ -26,15 +26,19 @@ export interface Depth {
   lastUpdateId: string;
 }
 
+// export interface Ticker {
+//   firstPrice: string;
+//   highPrice: string;
+//   lastPrice: string;
+//   lowPrice: string;
+//   priceChange: string;
+//   priceChangePercent: string;
+//   quoteVolume: string;
+//   symbol: string;
+//   trades: string;
+//   volume: string;
+// }
+
 export interface Ticker {
-  firstPrice: string;
-  highPrice: string;
   lastPrice: string;
-  lowPrice: string;
-  priceChange: string;
-  priceChangePercent: string;
-  quoteVolume: string;
-  symbol: string;
-  trades: string;
-  volume: string;
 }

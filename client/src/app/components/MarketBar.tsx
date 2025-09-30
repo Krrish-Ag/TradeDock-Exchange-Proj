@@ -10,7 +10,7 @@ export const MarketBar = ({ market }: { market: string }) => {
 
   //this is so that when we mount the Marketbar, we register for the event ticker which then runs the cllback fn which actually expects data Ticker and then updat teh ticker for Marketbar using setTicker
   useEffect(() => {
-    // getTicker(market).then(setTicker);
+    getTicker(market).then(setTicker);
 
     WSClient.getInstance().registerCallBack(
       "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
@@ -30,7 +30,7 @@ export const MarketBar = ({ market }: { market: string }) => {
         })),
       `TICKER-${market}`
     );
-    console.log(market.toLowerCase());
+
     WSClient.getInstance().sendMessage({
       method: "SUBSCRIBE",
       params: [
@@ -64,57 +64,19 @@ export const MarketBar = ({ market }: { market: string }) => {
   return (
     <div>
       <div className="flex items-center p-2 flex-row relative w-full overflow-hidden border-b border-slate-800">
-        <div className="flex items-center justify-between flex-row no-scrollbar overflow-auto pr-4">
+        <div className="flex items-center justify-between gap-8  flex-row no-scrollbar overflow-auto pr-4">
           <TickerFn market={market} />
           <div className="flex items-center flex-row space-x-8 pl-4">
-            <div className="flex flex-col h-full justify-center">
+            <div className="flex flex-col h-full text-2xl justify-center">
               <p
                 className={`font-medium tabular-nums text-greenText text-md text-green-500`}
               >
                 ${Number(ticker?.lastPrice).toFixed(2)}
               </p>
-              <p className="font-medium text-sm tabular-nums">
+              <p className="font-medium text-lg tabular-nums">
                 ${Number(ticker?.lastPrice).toFixed(2)}
               </p>
             </div>
-            <div className="flex flex-col">
-              <p className={`font-medium text-xs text-slate-400`}>24H Change</p>
-              <p
-                className={` text-sm font-medium tabular-nums leading-5 text-greenText ${
-                  Number(Number(ticker?.priceChange).toFixed(2)) > 0
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
-              >
-                {Number(ticker?.priceChange) > 0 ? "+" : ""}{" "}
-                {ticker?.priceChange}{" "}
-                {Number(ticker?.priceChangePercent)?.toFixed(2)}%
-              </p>
-            </div>
-            <div className="flex flex-col">
-              <p className="font-medium text-xs text-slate-400">24H High</p>
-              <p className="text-sm font-medium tabular-nums leading-5 ">
-                {Number(ticker?.highPrice).toFixed(2)}
-              </p>
-            </div>
-            <div className="flex flex-col">
-              <p className="font-medium text-xs text-slate-400">24H Low</p>
-              <p className="text-sm font-medium tabular-nums leading-5">
-                {Number(ticker?.lowPrice).toFixed(2)}
-              </p>
-            </div>
-            <button
-              type="button"
-              className="font-medium transition-opacity hover:opacity-80 hover:cursor-pointer text-base text-left"
-              data-rac=""
-            >
-              <div className="flex flex-col">
-                <p className="font-medium text-xs text-slate-400">24H Volume</p>
-                <p className="mt-1 text-sm font-medium tabular-nums leading-5">
-                  {Number(ticker?.volume).toFixed(2)}
-                </p>
-              </div>
-            </button>
           </div>
         </div>
       </div>
@@ -124,7 +86,7 @@ export const MarketBar = ({ market }: { market: string }) => {
 
 function TickerFn({ market }: { market: string }) {
   return (
-    <div className="flex gap-4 h-[60px] shrink-0 space-x-4">
+    <div className="flex gap-10 h-[60px] shrink-0 space-x-4">
       <div className="flex flex-row relative ml-2 -mr-4">
         <Image
           width={100}
@@ -153,9 +115,9 @@ function TickerFn({ market }: { market: string }) {
       </div>
       <button type="button" className="react-aria-Button" data-rac="">
         <div className="flex items-center justify-between flex-row cursor-pointer rounded-lg p-3 hover:opacity-80">
-          <div className="flex items-center flex-row gap-2 undefined">
+          <div className="flex items-center flex-row undefined">
             <div className="flex flex-row relative">
-              <p className="font-medium text-sm undefined">
+              <p className="font-bold undefined">
                 {market.replace("_", " / ")}
               </p>
             </div>
