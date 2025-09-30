@@ -1,15 +1,24 @@
 "use client";
+import axios from "axios";
 import Image from "next/image";
 import { useState } from "react";
 
-export function SwapUI({
-  market
-}: {
-  market: string;
-}) {
-  const [amount, setAmount] = useState("");
+export function SwapUI({ market }: { market: string }) {
+  const [price, setPrice] = useState("0");
+  const [quantity, setQuantity] = useState("0");
+  const [userId, setUserId] = useState("1");
   const [activeTab, setActiveTab] = useState("buy");
   const [type, setType] = useState("limit");
+
+  function makeOrder() {
+    axios.post("http://localhost:3000/api/v1/order", {
+      market,
+      price,
+      quantity,
+      side: activeTab,
+      userId,
+    });
+  }
 
   return (
     <div>
@@ -27,16 +36,23 @@ export function SwapUI({
           </div>
           <div className="flex flex-col px-3">
             <div className="flex flex-col flex-1 gap-3 text-baseTextHighEmphasis">
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between flex-row">
-                  <p className="text-xs font-normal text-baseTextMedEmphasis">
-                    Available Balance
-                  </p>
-                  <p className="font-medium text-xs text-baseTextHighEmphasis">
-                    36.94 USDC
-                  </p>
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-normal text-baseTextMedEmphasis">
+                  UserID
+                </p>
+                <div className="flex flex-col ">
+                  <input
+                    step="0.01"
+                    placeholder="0"
+                    className="h-12 rounded-lg border-2 border-solid border-baseBorderLight bg-[var(--background)] pr-12 text-right text-2xl leading-9 text-[$text] placeholder-baseTextMedEmphasis ring-0 transition focus:border-blue-400 focus:ring-0"
+                    type="text"
+                    defaultValue="1"
+                    onChange={(e) => setUserId(e.target.value)}
+                  />
                 </div>
               </div>
+            </div>
+            <div className="flex flex-col flex-1 gap-3 text-baseTextHighEmphasis">
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-normal text-baseTextMedEmphasis">
                   Price
@@ -47,7 +63,8 @@ export function SwapUI({
                     placeholder="0"
                     className="h-12 rounded-lg border-2 border-solid border-baseBorderLight bg-[var(--background)] pr-12 text-right text-2xl leading-9 text-[$text] placeholder-baseTextMedEmphasis ring-0 transition focus:border-blue-400 focus:ring-0"
                     type="text"
-                    defaultValue="134.38"
+                    defaultValue="0"
+                    onChange={(e) => setPrice(e.target.value)}
                   />
                   <div className="flex flex-row absolute right-1 top-1 p-2">
                     <div className="relative">
@@ -73,7 +90,8 @@ export function SwapUI({
                   placeholder="0"
                   className="h-12 rounded-lg border-2 border-solid border-baseBorderLight bg-[var(--background)] pr-12 text-right text-2xl leading-9 text-[$text] placeholder-baseTextMedEmphasis ring-0 transition focus:border-blue-400 focus:ring-0"
                   type="text"
-                  defaultValue="123"
+                  defaultValue="0"
+                  onChange={(e) => setQuantity(e.target.value)}
                 />
                 <div className="flex flex-row absolute right-1 top-1 p-2">
                   <div className="relative">
@@ -89,7 +107,7 @@ export function SwapUI({
               </div>
               <div className="flex justify-end flex-row">
                 <p className="font-medium pr-2 text-xs text-baseTextMedEmphasis">
-                  ≈ 0.00 USDC
+                  ≈ {price * quantity} INR
                 </p>
               </div>
               <div className="flex justify-center flex-row mt-2 gap-3">
@@ -107,13 +125,23 @@ export function SwapUI({
                 </div>
               </div>
             </div>
-            <button
-              type="button"
-              className="font-bold  focus:ring-blue-200 focus:none focus:outline-none text-center h-12 rounded-xl text-base px-4 py-2 my-4 bg-green-400 text-black active:scale-98"
-              data-rac=""
-            >
-              Buy
-            </button>
+            {activeTab === "buy" ? (
+              <button
+                type="button"
+                className="font-bold  focus:ring-blue-200 focus:none focus:outline-none text-center h-12 rounded-xl text-base px-4 py-2 my-4 bg-green-400 text-black active:scale-98"
+                onClick={makeOrder}
+              >
+                Buy
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="font-bold  focus:ring-blue-200 focus:none focus:outline-none text-center h-12 rounded-xl text-base px-4 py-2 my-4 bg-red-400 text-black active:scale-98"
+                onClick={makeOrder}
+              >
+                Sell
+              </button>
+            )}
             <div className="flex justify-between flex-row mt-1">
               <div className="flex flex-row gap-2">
                 <div className="flex items-center">

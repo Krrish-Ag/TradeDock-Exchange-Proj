@@ -6,6 +6,7 @@ export const orderRouter = express.Router();
 
 orderRouter.post("/", async (req, res) => {
   const { market, price, quantity, side, userId } = req.body;
+  console.log("LPLPLP", price, market);
   if (price <= 0) {
     return res.json({ message: "The price must be a positive number" });
   }
@@ -19,6 +20,7 @@ orderRouter.post("/", async (req, res) => {
       userId,
     },
   });
+  console.log(response);
   res.json(response.payload);
 });
 
