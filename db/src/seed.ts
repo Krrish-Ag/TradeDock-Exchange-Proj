@@ -12,15 +12,15 @@ async function initializeDB() {
   await client.connect();
 
   await client.query(`
-        DROP TABLE IF EXISTS "tata_prices";
-        CREATE TABLE "tata_prices"(
-            time            TIMESTAMP WITH TIME ZONE NOT NULL,
+        DROP TABLE IF EXISTS trades_db;
+        CREATE TABLE trades_db(
+            time    TIMESTAMP WITH TIME ZONE NOT NULL,
             price   DOUBLE PRECISION,
-            volume      DOUBLE PRECISION,
-            market   VARCHAR (10)
+            volume  DOUBLE PRECISION,
+            market  VARCHAR (20)
         );
         
-        SELECT create_hypertable('tata_prices', 'time', 'price', 2);
+        SELECT create_hypertable('trades_db', 'time', 'price', 2);
     `);
 
   await client.query(`
@@ -33,7 +33,7 @@ async function initializeDB() {
             last(price, time) AS close,
             sum(volume) AS volume,
             market
-        FROM tata_prices
+        FROM trades_db
         GROUP BY start_time, market;
     `);
 
@@ -47,7 +47,7 @@ async function initializeDB() {
             last(price, time) AS close,
             sum(volume) AS volume,
             market
-        FROM tata_prices
+        FROM trades_db
         GROUP BY start_time, market;
     `);
 
@@ -61,7 +61,7 @@ async function initializeDB() {
             last(price, time) AS close,
             sum(volume) AS volume,
             market
-        FROM tata_prices
+        FROM trades_db
         GROUP BY start_time, market;
     `);
 

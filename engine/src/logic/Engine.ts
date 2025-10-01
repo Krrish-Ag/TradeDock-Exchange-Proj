@@ -9,6 +9,7 @@ import {
   ON_RAMP,
 } from "../types/fromApi";
 import { RedisManager } from "../RedisManager";
+import { setBaseBalances, SUPPORTED_MARKETS } from "./market_logic";
 
 interface UserBalance {
   [key: string]: {
@@ -49,8 +50,11 @@ export class Engine {
       this.balances = new Map(snapshotFromFile.balances);
     } else {
       //otherwise start from the start
-      this.orderbooks = [new OrderBook(`TATA`, [], [], 0, 0)];
-      this.setBaseBalances();
+      this.orderbooks = SUPPORTED_MARKETS.map(
+        (m) => new OrderBook(m.split("_")[0], [], [], 0, 0)
+      );
+      console.log(this.orderbooks);
+      setBaseBalances(this.balances);
     }
 
     //saves the snapshot every 3 seconds to update it
@@ -611,40 +615,5 @@ export class Engine {
     } else {
       userBalance[QUOTE_CURRENCY].available += amount;
     }
-  }
-
-  setBaseBalances() {
-    this.balances.set("1", {
-      [QUOTE_CURRENCY]: {
-        available: 10000000,
-        locked: 0,
-      },
-      TATA: {
-        available: 10000000,
-        locked: 0,
-      },
-    });
-
-    this.balances.set("2", {
-      [QUOTE_CURRENCY]: {
-        available: 10000000,
-        locked: 0,
-      },
-      TATA: {
-        available: 10000000,
-        locked: 0,
-      },
-    });
-
-    this.balances.set("5", {
-      [QUOTE_CURRENCY]: {
-        available: 10000000,
-        locked: 0,
-      },
-      TATA: {
-        available: 10000000,
-        locked: 0,
-      },
-    });
   }
 }
