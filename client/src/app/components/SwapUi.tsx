@@ -66,14 +66,17 @@ export function SwapUI({ market }: { market: string }) {
                     defaultValue="0"
                     onChange={(e) => setPrice(e.target.value)}
                   />
-                  <div className="flex flex-row absolute right-1 top-1 p-2">
+                  <div className="flex flex-row absolute right-1 bottom-1 p-2">
                     <div className="relative">
-                      <img
-                        alt="Symbol 1"
-                        src={`https://backpack.exchange/coins/${
-                          market.toLowerCase().split("_")[0]
-                        }.svg`}
-                        className="w-6 h-6"
+                      <Image
+                        width={50}
+                        height={50}
+                        alt="Quote Asset Logo"
+                        loading="lazy"
+                        decoding="async"
+                        data-nimg="1"
+                        className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
+                        src={`/icons/${market.toLowerCase().split("_")[1]}.png`}
                       />
                     </div>
                   </div>
@@ -93,14 +96,17 @@ export function SwapUI({ market }: { market: string }) {
                   defaultValue="0"
                   onChange={(e) => setQuantity(e.target.value)}
                 />
-                <div className="flex flex-row absolute right-1 top-1 p-2">
+                <div className="flex flex-row absolute right-1 bottom-1 p-2">
                   <div className="relative">
-                    <img
-                      alt="Symbol 2"
-                      src={`https://backpack.exchange/coins/${
-                        market.toLowerCase().split("_")[1]
-                      }.svg`}
-                      className="w-6 h-6"
+                    <Image
+                      width={100}
+                      height={100}
+                      alt="Base Asset Logo"
+                      loading="lazy"
+                      decoding="async"
+                      data-nimg="1"
+                      className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
+                      src={`/icons/${market.toLowerCase().split("_")[0]}.png`}
                     />
                   </div>
                 </div>

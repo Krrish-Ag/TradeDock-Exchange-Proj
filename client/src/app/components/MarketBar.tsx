@@ -56,23 +56,21 @@ export const MarketBar = ({ market }: { market: string }) => {
   return (
     <div>
       <div className="flex items-center p-2 flex-row relative w-full overflow-hidden border-b border-slate-800">
-        <div className="flex items-center justify-between gap-8  flex-row no-scrollbar overflow-auto pr-4">
+        <div className="flex items-center justify-between gap-15 flex-row no-scrollbar overflow-auto pr-4">
           <TickerFn market={market} />
-          <div className="flex items-center flex-row space-x-8 pl-4">
-            <div className="flex flex-col h-full text-2xl justify-center">
-              <p
-                className={`font-medium tabular-nums text-greenText text-md text-green-500`}
-              >
-                {isNaN(Number(ticker?.lastPrice))
-                  ? "No Trade Yet"
-                  : `₹${Number(ticker?.lastPrice).toFixed(2)}`}
-              </p>
-              <p className="font-medium text-lg tabular-nums">
-                {isNaN(Number(ticker?.lastPrice))
-                  ? "No Trade Yet"
-                  : `₹${Number(ticker?.lastPrice).toFixed(2)}`}
-              </p>
-            </div>
+          <div className="flex flex-col h-full text-2xl justify-center">
+            <p
+              className={`font-medium tabular-nums text-greenText text-sm md:text-2xl text-green-500`}
+            >
+              {isNaN(Number(ticker?.lastPrice))
+                ? "No Trade Yet"
+                : `₹${Number(ticker?.lastPrice).toFixed(2)}`}
+            </p>
+            <p className="font-medium text-xs md:text-xl tabular-nums">
+              {isNaN(Number(ticker?.lastPrice))
+                ? "No Trade Yet"
+                : `₹${Number(ticker?.lastPrice).toFixed(2)}`}
+            </p>
           </div>
         </div>
       </div>
@@ -87,26 +85,22 @@ function TickerFn({ market }: { market: string }) {
         <Image
           width={100}
           height={100}
-          alt="SOL Logo"
+          alt="Base Asset Logo"
           loading="lazy"
           decoding="async"
           data-nimg="1"
           className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-          src={`https://backpack.exchange/coins/${
-            market.toLowerCase().split("_")[0]
-          }.svg`}
+          src={`/icons/${market.toLowerCase().split("_")[0]}.png`}
         />
         <Image
           width={100}
           height={100}
-          alt="USDC Logo"
+          alt="Quote Asset Logo"
           loading="lazy"
           decoding="async"
           data-nimg="1"
           className="h-6 w-6 -ml-2 mt-4 rounded-full"
-          src={`https://backpack.exchange/coins/${
-            market.toLowerCase().split("_")[1]
-          }.svg`}
+          src={`/icons/${market.toLowerCase().split("_")[1]}.png`}
         />
       </div>
       <button type="button" className="react-aria-Button" data-rac="">

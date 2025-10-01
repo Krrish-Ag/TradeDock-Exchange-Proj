@@ -8,7 +8,7 @@ interface UserBalance {
 export const SUPPORTED_MARKETS = [
   "TATA_INR",
   "RELIANCE_INR",
-  "ADANI_INR",
+  "AMAZON_INR",
   "WIPRO_INR",
   "GOOGLE_INR",
   "HDFC_INR",

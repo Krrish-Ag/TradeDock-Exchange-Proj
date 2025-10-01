@@ -1,3 +1,4 @@
+import { isUndefined } from "util";
 import { Depth, Ticker, Trade } from "./types";
 
 // export const BASE_URL = "wss://stream.binance.com:9443/ws";
@@ -102,8 +103,10 @@ export class WSClient {
 
   //deregistering, will be used in the cleanup of useEffect
   deRegisterCallBack(type: string, id: string) {
-    const idx = this.callbacks[type].findIndex((xx) => xx.id === id);
-    if (idx !== -1) {
+    const idx =
+      this.callbacks[type] &&
+      this.callbacks[type].findIndex((xx) => xx.id === id);
+    if (idx !== -1 && !isUndefined(idx)) {
       this.callbacks[type].splice(idx, 1);
     }
   }
