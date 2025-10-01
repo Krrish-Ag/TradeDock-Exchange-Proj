@@ -3,7 +3,7 @@ export const AskTable = ({ asks }: { asks: [string, string][] }) => {
   let currentTotal = 0;
   asks.sort((a, b) => b[0] - a[0]);
 
-  const relevantAsks = asks.slice(0, 15);
+  const relevantAsks = asks.reverse().slice(0, 15).reverse(); //this is because we want the asks for like the smallest price visible on screen
 
   const asksWithTotal: [string, string, number][] = [];
   for (let i = relevantAsks.length - 1; i >= 0; i--) {

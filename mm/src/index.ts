@@ -3,7 +3,7 @@ import axios from "axios";
 const BASE_URL = "http://localhost:3000";
 const TOTAL_BIDS = 15;
 const TOTAL_ASK = 15;
-const MARKET = "TATA_INR";
+const MARKET = "RELIANCE_INR";
 const USER_ID = "5"; //hardcoded the 5th user to be
 
 async function main() {
