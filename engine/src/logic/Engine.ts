@@ -561,6 +561,13 @@ export class Engine {
   ) {
     if (side === "buy") {
       //for a buy order, the user must have the sufficient money in their avl balance
+      console.log(
+        userId +
+          " " +
+          this.balances.get(userId) +
+          " " +
+          Number(price) * Number(quantity)
+      );
       if (
         (this.balances.get(userId)?.[quoteAsset]?.available || 0) <
         Number(price) * Number(quantity)

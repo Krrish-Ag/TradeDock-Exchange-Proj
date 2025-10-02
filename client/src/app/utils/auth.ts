@@ -37,7 +37,6 @@ export const NEXT_AUTH = {
       return token;
     },
     async session({ session, token }) {
-      console.log(token);
       if (session.user) {
         session.user.userId = token.userId;
       }
