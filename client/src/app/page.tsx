@@ -1,30 +1,28 @@
-import Link from "next/link";
-import { supportedMarkets } from "./utils/data";
-
-//list of markets
+"use client";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Home() {
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  async function checkId() {
+    await signIn("credentials", { userId, password, redirect: false });
+    router.push("/markets");
+  }
   return (
     <div className="flex justify-center">
-      <div className="grid grid-cols-1 md:grid-cols-2 w-400 gap-4 p-8">
-        {supportedMarkets.map((market) => (
-          <Link key={market.name} href={`trade/${market.name}`}>
-            <div className="bg-gray-800 p-10 h-40 rounded-lg flex gap-10 items-center space-x-4 cursor-pointer hover:bg-gray-700 transition-colors duration-200">
-              <img
-                src={market.icon}
-                alt={market.base}
-                className="w-20 h-20 rounded-full"
-              />
-              <div className="flex flex-col gap-3">
-                <p className="text-2xl lg:text-3xl font-bold text-white">
-                  {market.base} / {market.quote}
-                </p>
-                <p className="text-gray-400">Trade Now &rarr;</p>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+      User ID:
+      <input
+        type="text"
+        value={userId}
+        onChange={(e) => setUserId(e.target.value)}
+      />
+      Pass:
+      <input type="password" onChange={(e) => setPassword(e.target.value)} />
+      <button onClick={checkId}>Submit</button>
     </div>
   );
 }

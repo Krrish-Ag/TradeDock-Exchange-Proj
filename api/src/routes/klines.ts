@@ -40,19 +40,7 @@ kLinesRouter.get("/", async (req, res) => {
       symbol,
     ]);
     console.log("RES FROM KLINES_TABLE", result.rows);
-    // res.json(
-    //   (result.rows as any[]).map((x: any) => ({
-    //     close: x.close,
-    //     end: x.bucket,
-    //     high: x.high,
-    //     low: x.low,
-    //     open: x.open,
-    //     quoteVolume: x.quoteVolume,
-    //     start: x.start,
-    //     trades: x.trades,
-    //     volume: x.volume,
-    //   }))
-    // );
+
     res.json(
       (result.rows as any[]).map((x: any) => [
         x.start_time,

@@ -3,10 +3,9 @@ import axios from "axios";
 import Image from "next/image";
 import { useState } from "react";
 
-export function SwapUI({ market }: { market: string }) {
+export function SwapUI({ market, userId }: { market: string; userId: string }) {
   const [price, setPrice] = useState("0");
   const [quantity, setQuantity] = useState("0");
-  const [userId, setUserId] = useState("1");
   const [activeTab, setActiveTab] = useState("buy");
   const [type, setType] = useState("limit");
 
@@ -35,23 +34,6 @@ export function SwapUI({ market }: { market: string }) {
             </div>
           </div>
           <div className="flex flex-col px-3">
-            <div className="flex flex-col flex-1 gap-3 text-baseTextHighEmphasis">
-              <div className="flex flex-col gap-2">
-                <p className="text-xs font-normal text-baseTextMedEmphasis">
-                  UserID
-                </p>
-                <div className="flex flex-col ">
-                  <input
-                    step="0.01"
-                    placeholder="0"
-                    className="h-12 rounded-lg border-2 border-solid border-baseBorderLight bg-[var(--background)] pr-12 text-right text-2xl leading-9 text-[$text] placeholder-baseTextMedEmphasis ring-0 transition focus:border-blue-400 focus:ring-0"
-                    type="text"
-                    defaultValue="1"
-                    onChange={(e) => setUserId(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
             <div className="flex flex-col flex-1 gap-3 text-baseTextHighEmphasis">
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-normal text-baseTextMedEmphasis">

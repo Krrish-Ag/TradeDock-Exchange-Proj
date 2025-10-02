@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
+import Providers from "./providers";
+import { signOut } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}
       >
         <div className="flex justify-between px-2 md:px-10 py-5 items-center">
-          <Link href="/">
+          <Link href="/markets">
             <Image
               src="/logo.png"
               alt=""
@@ -46,7 +48,7 @@ export default function RootLayout({
             DEV MODE
           </p>
         </div>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

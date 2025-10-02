@@ -4,16 +4,27 @@ import { SwapUI } from "@/app/components/SwapUi";
 import { TradeView } from "@/app/components/TradeView";
 import { Trades } from "@/app/components/Trades";
 import { Depth } from "@/app/components/for_depth/Depth";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Page() {
+  const { data, status } = useSession();
+  const router = useRouter();
+
   const { market }: { market: string } = useParams();
 
   //to replace the _, as binance needs no _, but I need that for images
   // const marketName = market.replace("_", "") || "";
 
   const [activeTab, setActiveTab] = useState<string>("Book");
+
+  useEffect(() => {
+    if (status === "loading") return;
+    else if (!data) router.push("/");
+  }, [status, data, router]);
+
+  if (!data) return;
 
   return (
     <div className="flex flex-col lg:flex-row flex-1">
@@ -54,7 +65,7 @@ export default function Page() {
             </div>
             {/* third */}
             <div className="flex flex-col self-center lg:self-start w-[350px] lg:w-[250px]">
-              <SwapUI market={market} />
+              <SwapUI market={market} userId={data.userId} />
             </div>
           </div>
         </div>
