@@ -1,33 +1,22 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
 export function AppBar() {
-  const router = useRouter();
-  const route = usePathname();
   return (
-    <div className="flex gap-10 p-6 border-b border-slate-800 items-center">
-      <div
-        className="cursor-pointer text-white text-xl"
-        onClick={() => router.push("/")}
-      >
-        Exchange
-      </div>
-      <div
-        className={`cursor-pointer text-sm ${
-          route.startsWith("/market") ? "text-white" : "text-slate-500"
-        }`}
-        onClick={() => router.push("/markets")}
-      >
-        Markets
-      </div>
-      <div
-        className={`cursor-pointer text-sm ${
-          route.startsWith("/trade") ? "text-white" : "text-slate-500"
-        }`}
-        onClick={() => router.push("/trade/SOLUSDC")}
-      >
-        Trade
-      </div>
+    <div className="flex justify-between px-2 md:px-10 py-5 items-center">
+      <Link href="/markets">
+        <Image
+          src="/logo.png"
+          alt=""
+          width={200}
+          height={200}
+          className="rounded-xl cursor-pointer"
+        />
+      </Link>
+      <p className="text-3xl md:text-4xl font-semibold md:font-extrabold">
+        DEV MODE
+      </p>
     </div>
   );
 }
