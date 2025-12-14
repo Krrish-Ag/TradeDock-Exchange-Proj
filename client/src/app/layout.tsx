@@ -4,7 +4,6 @@ import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
 import Providers from "./providers";
-import { signOut } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

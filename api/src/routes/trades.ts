@@ -14,6 +14,7 @@ export const tradesRouter = Router();
 
 tradesRouter.get("/", async (req, res) => {
   const { symbol } = req.query;
+  console.log("Getting trades: ", symbol);
   // getting from DB
   const query = "SELECT * FROM trades_db WHERE market=$1";
   const response = await pgClient.query(query, [symbol]);

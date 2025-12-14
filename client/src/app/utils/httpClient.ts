@@ -27,9 +27,9 @@ export async function getKlines(
   const response = await axios.get(
     `${BASE_URL}/klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`
   );
-  console.log("response for klines", response);
+  // console.log("response for klines", response);
   const data: KLine[] = response.data;
-  console.log("data from klines router", data);
+  // console.log("data from klines router", data);
   return data;
   // return data.sort((x, y) => Number(x[0]) - Number(y[0]));
 }

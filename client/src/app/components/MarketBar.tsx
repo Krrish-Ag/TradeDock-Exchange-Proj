@@ -15,7 +15,7 @@ export const MarketBar = ({ market }: { market: string }) => {
     WSClient.getInstance().registerCallBack(
       "24hrTicker", //this type chosen as this is the type in the event.data.e is what we get
       (data: Partial<Ticker>) => {
-        console.log("DATA", data);
+        // console.log("DATA", data);
         setTicker((prevTicker) => ({
           lastPrice: data?.lastPrice ?? "",
         }));

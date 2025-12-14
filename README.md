@@ -5,6 +5,7 @@ Start Websocket - npm run dev
 Seed DB - npm run seed:db
 Start refreshing db for charts DB - npm run refresh:views
 Start db (for redis) - npm run dev
+Start client - npm run dev
 Can start mm for random trades - npm run dev
 
 Remember your trades and data is storeds in snapshot.json in engine, so for going to default, stop engine, delet snapshot.json file, start engine again.

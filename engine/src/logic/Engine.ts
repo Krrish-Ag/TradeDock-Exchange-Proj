@@ -34,7 +34,7 @@ export class Engine {
       console.log("No snapshot found");
     }
 
-    //if the file already exists, tat means my BE ran before, restore the previous state
+    //if the file already exists, that means my BE ran before, restore the previous state
     if (snapshot) {
       const snapshotFromFile = JSON.parse(snapshot.toString());
       this.orderbooks = snapshotFromFile.orderbooks.map(
@@ -80,7 +80,7 @@ export class Engine {
     message: MessageFromApi;
     clientId: string;
   }) {
-    // console.log("===",clientId, message);
+    console.log("Message received from API: ", message);
     switch (message.type) {
       case CREATE_ORDER:
         try {
@@ -100,9 +100,9 @@ export class Engine {
               orderId,
             },
           });
-          console.log("IT came hereeee");
+          console.log("Order created");
         } catch (error) {
-          console.log("ERROR", error);
+          console.log("ERROR while creating order: ", error);
           RedisManager.getInstance().sendToApi(clientId, {
             type: "ORDER_CANCELLED",
             payload: {
@@ -194,13 +194,13 @@ export class Engine {
           if (!openOrderBook) throw new Error("No orderbook/market like that");
 
           const openOrders = openOrderBook.getOpenOrders(clientId);
+          console.log("Successfully fetched open orders");
           RedisManager.getInstance().sendToApi(clientId, {
             type: "OPEN_ORDERS",
             payload: openOrders,
           });
         } catch (error) {
-          console.log("Error while fetching open orders");
-          console.log("ERROR", error);
+          console.log("Error while fetching open orders: ", error);
         }
         break;
       case GET_DEPTH:
@@ -212,12 +212,14 @@ export class Engine {
 
           const depth = OrderBook.getDepth();
 
+          console.log("Succcessfully fetched depth");
+
           RedisManager.getInstance().sendToApi(clientId, {
             type: "DEPTH",
             payload: depth,
           });
         } catch (error) {
-          console.log("ERROR", error);
+          console.log("ERROR in getting the depth: ", error);
           RedisManager.getInstance().sendToApi(clientId, {
             type: "DEPTH",
             payload: {

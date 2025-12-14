@@ -20,6 +20,7 @@ export class SubscriptionManager {
   public subscribe(userId: string, sub: string) {
     if (this.userToSubscriptions.get(userId)?.includes(sub)) return;
 
+    console.log("Subscribing user ", userId, "to ");
     //adding sub to the user
     if (!this.userToSubscriptions.has(userId)) {
       this.userToSubscriptions.set(userId, [sub]);
@@ -37,7 +38,7 @@ export class SubscriptionManager {
     //if a sub has been connected for the first time, need to CONNECT TO REDIS so that for any upcomibng msgs coming to this channel, we receive them
     if (this.subscriptionToUsers.get(sub)?.length === 1) {
       // console.log("subscribing", sub);
-      this.redisClient.subscribe(sub, (message, channel) => {
+      this.redisClient.subscribe(sub, (message: string, channel: string) => {
         this.redisCallbackHandler(message, channel);
       });
     }

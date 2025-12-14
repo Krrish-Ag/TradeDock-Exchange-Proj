@@ -45,7 +45,9 @@ export function Depth({ market }: { market: string }) {
     <div className="overflow-y-auto no-scrollbar">
       <TableHeader />
       {asks && <AskTable asks={asks} />}
-      {price && <div className="text-lg">{(+price).toFixed(2)}</div>}
+      {price && !isNaN(Number(price)) && (
+        <div className="text-2xl">{(+price).toFixed(2)}</div>
+      )}
       {bids && <BidTable bids={bids} />}
     </div>
   );

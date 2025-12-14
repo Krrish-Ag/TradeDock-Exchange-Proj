@@ -38,11 +38,11 @@ export class WSClient {
     this.ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       const type = message.e;
-      console.log(type);
+      // console.log(type);
       if (this.callbacks[type]) {
         // console.log("IN there");
         if (type === "24hrTicker") {
-          console.log("YOOOOO", message);
+          // console.log("YO", message);
           this.callbacks[type].forEach((xx) => {
             const newTicker: Partial<Ticker> = {
               lastPrice: message.lastPrice,
@@ -62,7 +62,7 @@ export class WSClient {
             xx.callback(newDepth);
           });
         } else if (type === "trade") {
-          console.log(message);
+          // console.log(message);
           this.callbacks[type].forEach((xx) => {
             const newTrade: Trade = {
               id: message.tradeId,
@@ -71,7 +71,7 @@ export class WSClient {
               volume: message.qty,
               time: message.time,
             };
-            console.log(newTrade);
+            // console.log(newTrade);
 
             xx.callback(newTrade);
           });

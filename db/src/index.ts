@@ -20,9 +20,9 @@ async function main() {
     const response = await redisClient.brPop("db_process", 0);
     if (response) {
       const message: DbMessage = JSON.parse(response.element);
-      console.log("MESSAgE", message);
+      console.log("MESSAGE: ", message);
       if (message.type === "TRADE_ADDED") {
-        console.log("adding data");
+        console.log("Ddding data");
         const price = message.data.price;
         const volume = message.data.quantity;
         const market = message.data.market;

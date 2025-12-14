@@ -17,10 +17,10 @@ export const NEXT_AUTH = {
           avlUsers[credentials.userId] &&
           avlUsers[credentials.userId] === credentials.password
         ) {
-          console.log("Came here11");
+          // console.log("Came here11");
           return { userId: credentials.userId };
         } else {
-          console.log("Came here22");
+          // console.log("Came here22");
           return null;
         }
       },
@@ -31,7 +31,7 @@ export const NEXT_AUTH = {
     //Add the user Id to token
     async jwt({ token, user }) {
       if (user) {
-        console.log(user);
+        // console.log(user);
         token.userId = user.userId;
       }
       return token;

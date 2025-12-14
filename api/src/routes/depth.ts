@@ -6,6 +6,7 @@ export const depthRouter = Router();
 
 depthRouter.get("/", async (req, res) => {
   const { symbol } = req.query;
+  console.log("Getting depths: ", symbol);
   const response = await RedisManager.getInstance().sendAndAwait({
     type: GET_DEPTH,
     data: {
