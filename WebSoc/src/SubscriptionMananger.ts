@@ -20,7 +20,7 @@ export class SubscriptionManager {
   public subscribe(userId: string, sub: string) {
     if (this.userToSubscriptions.get(userId)?.includes(sub)) return;
 
-    console.log("Subscribing user ", userId, "to ");
+    console.log("Subscribing user ", userId, "to ", sub);
     //adding sub to the user
     if (!this.userToSubscriptions.has(userId)) {
       this.userToSubscriptions.set(userId, [sub]);
@@ -56,6 +56,7 @@ export class SubscriptionManager {
   }
 
   public unsubscribe(userId: string, sub: string) {
+    console.log("Unsubscribing user ", userId, "from ", sub);
     //removing from userToSubscriptions
     const subscriptions = this.userToSubscriptions.get(userId);
     if (subscriptions) {
