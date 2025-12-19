@@ -1,4 +1,4 @@
-# 📈 Tradedock
+# 📈 TradeDock
 
 Tradedock is a high-performance, full-stack trading ecosystem. It features a custom-built matching engine, an automated market maker for liquidity, and a real-time data pipeline for live charts and order books.
 
